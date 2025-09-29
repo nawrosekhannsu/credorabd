@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Credora BD - Marketplace</title>
+  <style>
+    :root{
+      --cream: #fff6e6;
+      --mati: #efe4d9;
+      --card: #ffffff;
+      --accent: #2b7a78;
+      --muted: #666;
+    }
+    *{box-sizing:border-box;font-family: "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif}
+    body{
+      margin:0;
+      background: var(--mati);
+      color:#222;
+      min-height:100vh;
+    }
+
+    /* Header */
+    header{
+      background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+      position:sticky;
+      top:0;
+      z-index:1000;
+      padding:14px 20px;
+      display:flex;
+      align-items:center;
+      gap:20px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05)
+    }
+    .brand{
+      font-weight:700;
+      font-size:20px;
+      color:var(--accent);
+    }
+    .search-wrap{
+      flex:1;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .search-wrap input[type="search"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      outline:none;
+      font-size:14px;
+    }
+    .cart-btn{
+      position:relative;
+      background:transparent;
+      border:0;
+      cursor:pointer;
+      font-size:16px;
+    }
+    .cart-count{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      background:#e63946;
+      color:white;
+      font-weight:700;
+      width:20px;height:20px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;font-size:12px;
+    }
+
+    /* Layout */
+    .container{
+      display:flex;
+      gap:20px;
+      padding:20px;
+    }
+    .sidebar {
+    width: 220px;
+    background: var(--cream);
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    height: fit-content;
+    
+    position: sticky;   /* <-- add this */
+    top: 30px;          /* distance from top */
+}
+    .sidebar h3{margin:0 0 10px 0;font-size:16px;color:#333}
+    .category{
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .cat-item{
+      padding:8px 10px;border-radius:6px;cursor:pointer;font-size:14px;color:#333;
+    }
+    .cat-item:hover{background:rgba(0,0,0,0.03)}
+
+    /* Main */
+    .main{
+      flex:1;
+    }
+    /* Carousel */
+    .carousel{
+      width:100%;
+      height:220px;
+      border-radius:10px;
+      overflow:hidden;
+      position:relative;
+      margin-bottom:18px;
+      background:#ddd;
+    }
+    .carousel img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      position:absolute;
+      left:0;top:0;
+      transition:opacity .6s ease;
+      opacity:0;
+    }
+    .carousel img.active{opacity:1}
+
+
+    /* Products grid */
+    .products{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:16px;
+    }
+    .product{
+      background: var(--card);
+      border-radius:10px;
+      padding:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      display:flex;flex-direction:column;gap:8px;
+    }
+     .product img
+     {
+      width:60%;
+      height:auto; /* full image দেখানোর জন্য */
+      object-fit:contain;
+      border-radius:8px;
+     }
+   
+   .product img {
+    width: 60%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    /* 🛠️ পরিবর্তনের অংশ: ইমেজকে মাঝখানে আনার জন্য */
+    display: block; 
+    margin: 0 auto; 
+    /* -------------------------------------- */
+}
+
+.p-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1
+}
+
+.p-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: #111
+}
+
+.p-price {
+    font-weight: 700;
+    color: #0b6b63
+}
+
+.p-meta {
+    font-size: 13px;
+    color: var(--muted)
+}
+
+.p-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto
+}
+
+.btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 0;
+    cursor: pointer;
+    font-weight: 600
+}
+
+.btn-add {
+    background: #ffd166
+}
+
+.btn-buy {
+    background: var(--accent);
+    color: white
+}
+   
+    .cart-dropdown{
+      position:absolute;
+      right:20px;
+      top:62px;
+      width:320px;
+      background:white;
+      border-radius:10px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.12);
+      display:none;
+      padding:12px;
+      z-index:2000;
+    }
+    .cart-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0}
+    .cart-item img{width:50px;height:50px;object-fit:cover;border-radius:6px}
+    .cart-item .meta{flex:1}
+    .cart-item .meta b{display:block}
+    .cart-footer{padding-top:8px;display:flex;justify-content:space-between;align-items:center}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:3000}
+    .modal{background:white;border-radius:10px;padding:18px;width:420px;max-width:95%}
+    .modal h3{margin-top:0}
+    .form-row{display:flex;gap:8px}
+    .form-row .col{flex:1}
+    .form-row input, .form-row textarea, .form-row select{
+      width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;
+    }
+    .payment-options{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .payment-options label{display:flex;gap:8px;align-items:center;padding:8px;border-radius:8px;border:1px solid #eee}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:1000px){
+      .products{grid-template-columns: repeat(3, 1fr);}
+      .sidebar{display:none}
+      header{flex-wrap:wrap}
+    }
+    @media (max-width:700px){
+      .products{grid-template-columns: repeat(2, 1fr);}
+      .carousel{height:160px}
+    }
+    @media (max-width:420px){
+      .products{grid-template-columns: repeat(1, 1fr);}
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Credora BD</div>
+    <div class="search-wrap">
+      <input id="searchInput" type="search" placeholder="Search... (প্রোডাক্ট নাম লিখে খুঁজুন)" />
+    </div>
+
+    <button class="cart-btn" id="cartToggle" title="Cart">
+      🛒 <span class="small">কার্ট</span>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+
+    <!-- cart dropdown -->
+    <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+      <div id="cartItemsWrap">
+        <div style="text-align:center;color:var(--muted);padding:8px 0">Cart is empty</div>
+      </div>
+      <div class="cart-footer" style="margin-top:8px">
+        <div><b id="cartTotal">Total: ৳0</b></div>
+        <div><button class="btn btn-buy" id="gotoCheckoutBtn">Buy</button></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <h3>Categories</h3>
+      <div class="category" id="categoryList">
+        <div class="cat-item" data-cat="">All</div>
+        <div class="cat-item" data-cat="Electrical">Electrical</div>
+        <div class="cat-item" data-cat="Cloths">Cloths</div>
+        <div class="cat-item" data-cat="Home Tax">Home Tax</div>
+        <div class="cat-item" data-cat="Toilettrease">Toilettrease</div>
+        <div class="cat-item" data-cat="Plannet">Plannet</div>
+        <div class="cat-item" data-cat="Toys">Toys</div>
+        <div class="cat-item" data-cat="Foods">Foods</div>
+        <div class="cat-item" data-cat="Crafts">Crafts</div>
+        <div class="cat-item" data-cat="accessories">accessories</div>
+        <div class="cat-item" data-cat="Engineers Choice">Engineers Choice</div>
+        
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- Carousel -->
+      <div class="carousel" id="carousel">
+        <img src="https://ik.imagekit.io/brightchamps/tr:w-500,c-maintain_ratio,q-75,f-auto/math/math-questions/19.6-as-a-fraction.png" alt="ad1" class="active">
+        <img src="https://scontent.fdac183-1.fna.fbcdn.net/v/t39.30808-6/555745498_4280119488891431_457200198011739441_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=k5kv2Lpom_IQ7kNvwG70W8o&_nc_oc=AdmA6ZH2_xEu4UT2helYeFgDbgE-m8Rm-BZbKQDPwNJF0XxAh0XBCl8EFLxr4ZZKFTQ&_nc_zt=23&_nc_ht=scontent.fdac183-1.fna&_nc_gid=KQY27r5PSDdIBELfusna9w&oh=00_Afa40E_YA-8kdgepAe-ptasazzvjMsZhIJrvrdlDKnRS6g&oe=68DEFD40" alt="ad2">
+        <img src="https://scontent.fdac183-1.fna.fbcdn.net/v/t39.30808-6/556038531_4280126895557357_6648693122062551077_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=fYdRHRCs7hkQ7kNvwFyDUoI&_nc_oc=AdlIj1PznMNj_3BXJUTbaBAsshDdvPkNnkI0RCTiP9x6vQ9Hc56lKxSeO3Ze4rhy9OU&_nc_zt=23&_nc_ht=scontent.fdac183-1.fna&_nc_gid=hs41ZLPS4guLdBQBu093kA&oh=00_AfZ8xcyStMazCzEzGR3NNxY8aF0WwSDA1H8zScSzwBWAVA&oe=68DEF38D" alt="ad3">
+      </div>
+
+      <!-- Products -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h2 style="margin:0">Products</h2>
+          <div class="small" id="resultInfo">Showing all products</div>
+        </div>
+        <div class="products" id="productsGrid">
+          <!-- products injected by JS -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal backdrop -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modalContent">
+      <!-- content injected by JS -->
+    </div>
+  </div>
+
+<script>
+  /***********************
+   * Product Data (edit this to change products)
+   ***********************/
+  const products = [
+    {id:1, name:"LED Bulb 9W", price:200, discount:10, weight:"200g", category:"Electrical", img:"https://static-01.daraz.com.bd/p/8f72836fbfc3129114629769e6a6d523.jpg"},
+    {id:2, name:"Cotton Shirt", price:650, discount:15, weight:"300g", category:"Cloths", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRauaiLcqWby549dyTpD5RSxFAyEMUXd7tcsA&s"},
+    {id:3, name:"Floor Cleaner", price:350, discount:0, weight:"1L", category:"Home Tax", img:"https://fixit.com.bd/wp-content/uploads/2023/08/26-123.webp"},
+    {id:4, name:"Toothpaste Pack", price:3220, discount:5, weight:"800g", category:"Toilettrease", img:"https://i5.walmartimages.com/seo/Colgate-Cavity-Protection-Toothpaste-with-Fluoride-Great-Regular-Flavor-6-oz-3-pack_95b84eea-88da-445e-9651-8bcaaf4a5bf8.2bfba80ddf0455c4ad441804eb1ef806.jpeg"},
+    {id:5, name:"Garden Plant", price:2550, discount:0, weight:"500g", category:"Plannet", img:"https://pbs.twimg.com/media/FsSvChrWYAMinI5?format=jpg&name=large"},
+    {id:6, name:"Fan Remote", price:480, discount:20, weight:"100g", category:"Electrical", img:"https://images.othoba.com/images/thumbs/0701830_click-remote-control-switch-fan-and-light.webp"},
+    {id:7, name:"Jeans Pant", price:1200, discount:10, weight:"700g", category:"Cloths", img:"https://static.ajkerdeal.com/images/deals/180324520232909011803/s1_armaney-jens-pant-for-men.webp"},
+    {id:8, name:"Wall Paint 1L Assian paint white", price:1600, discount:25, weight:"1L", category:"Home Tax", img:"https://d3vpmhw8imxmio.cloudfront.net/product-variants/4000001318/EDITING/4000001318_3-650x650.webp"},
+    {id:9, name:"Soap Set", price:220, discount:0, weight:"300g", category:"Toilettrease", img:"https://d2t8nl1y0ie1km.cloudfront.net/images/6728a7c1df61c327391235a4_Actisef-Soap-Original-75gm-Buy3-Get1-Free_1.webp"},
+    {id:10, name:"Herb Pot", price:1180, discount:5, weight:"2050g", category:"Plannet", img:"https://homebymb.com.au/cdn/shop/files/HerbPot.png?v=1743129409"},
+    {id:11, name:"Ultra-Compact 60% Wired Gaming Keyboard", price:3300, discount:5, weight:"400g", category:"Electrical", img:"https://m.media-amazon.com/images/I/71+p3Hx03dL._AC_SL1500_.jpg"},
+    {id:12, name:"Logitech Signature K650(Wirless)", price:2100, discount:5, weight:"350g", category:"Electrical", img:"https://cdn.mos.cms.futurecdn.net/4ohzXW2UdqpXoiTduBM7Dc-650-80.jpg.webp"},
+    {id:13, name:"Cherry KC 200 MX", price:3800, discount:5, weight:"850g", category:"Electrical", img:"https://cdn.mos.cms.futurecdn.net/pAGiLPN3kFw2oQ4PvWkbsW.jpg"},
+    {id:14, name:"Ziyoulang FreeWolf K87 Single Backlit Wired Gaming Mechanical Keyboard", price:3500, discount:5, weight:"600g", category:"Electrical", img:"https://www.ultratech.com.bd/image/cache/catalog/keyboard/ziyoulang/freewolf-k87/ziyoulang-freewolf-k87-single-backlit-wired-keyboard-2-500x500.jpg.webp"},
+    {id:15, name:"104 Black Dell CJ645 Wired Keyboard", price:700, discount:5, weight:"300g", category:"Electrical", img:"https://5.imimg.com/data5/SELLER/Default/2021/6/DV/DP/KY/55002018/dell-keyboard-1000x1000.jpg"},
+    {id:16, name:"E9310M", price:2000, discount:6, weight:"250g", category:"Electrical", img:"https://tinhocthanhkhang.vn/media/product/1798-ban-phim-khong-day-rapoo-e9350l-2.webp"},
+    {id:17, name:"Logitech MX Mechanical Mini Wireless Keyboard", price:4500, discount:5, weight:"650g", category:"Electrical", img:"https://cdn11.bigcommerce.com/s-q8jsr/images/stencil/640w/products/4921/34405/LOGI_MX_MECHANICAL_MINI_FOR_MAC_PALEGREY_TACTILE-2__80419.1726817642.jpg?c=2"},
+    {id:18, name:"I-8 Mini wirless keyboard RGB", price:550, discount:5, weight:"180g", category:"Electrical", img:"https://img.drz.lazcdn.com/static/bd/p/4778dc0403810c258369204118f63081.jpg_720x720q80.jpg"},
+   
+    {id:19, name:"Logitech G102-LIGHTSYNC RGB Wired Gaming Mouse (White)", price:1700, discount:5, weight:"100g", category:"Electrical", img:"https://techlandbd.com/cache/images/uploads/products/P0912506153/cover_cache_optimize-50.webp"},
+    {id:20, name:"TECKNET Wired Mouse", price:950, discount:5, weight:"200g", category:"Electrical", img:"https://tecknet.co.uk/cdn/shop/files/TECKNETWiredMouse-Black.jpg?v=1697449025&width=1200"},
+    {id:21, name:"Logitech M187 White Wireless Mouse #910-005380", price:1400, discount:5, weight:"120g", category:"Electrical", img:"https://www.ryans.com/storage/products/main/logitech-m187-white-wireless-11611484848.webp"},
+    {id:22, name:"Zeta Wired Mouse ,1000 DPI ,2L", price:850, discount:5, weight:"100g", category:"Electrical", img:"https://www.coconutlife.in/cdn/shop/files/jpeg-optimizer_ZetaGrey.png?v=1702554725"},
+    {id:23, name:"Ergonomic RGB Wired Gaming Mouse with High-Precision", price:1500, discount:5, weight:"150g", category:"Electrical", img:"https://m.media-amazon.com/images/I/61wQNtMZHgL._AC_SL1500_.jpg"},
+    {id:24, name:"Amazon Basics 3-Button USB Wired Mouse", price:750, discount:5, weight:"86g", category:"Electrical", img:"https://m.media-amazon.com/images/I/61i0CV-tKpL.jpg"},
+    
+    {id:25, name:"Samsung 3.5mm EHS64 Stereo Headset Earbuds with Remote and Mic", price:1450, discount:5, weight:"50g", category:"Electrical", img:"https://m.media-amazon.com/images/I/61ppBx-CrFL.jpg"},
+    {id:26, name:"Yison Celebrat G35 3.5mm Wired Earphone", price:200, discount:5, weight:"67g", category:"Electrical", img:"https://www.startech.com.bd/image/cache/catalog/earphone/yison/celebrat-g35/celebrat-g35-01-500x500.webp"},
+    {id:27, name:"Baseus Encok HZ11 3.5mm Jack Wired Earphone", price:350, discount:5, weight:"64g", category:"Electrical", img:"https://baseusonline.com/uploads/img/pi/170/170194260482/1701942604.jpg"},
+    {id:28, name:"Wavefun Star Wireless Earbuds", price:1300, discount:5, weight:"420g", category:"Electrical", img:"https://gadgethub.com.bd/storage/product/wavefun-star-wireless-earbuds-2022-01-10-61dc58008736a.jpg"},
+     {id:29, name:"Qcy Earbuds", price:2300, discount:5, weight:"350g", category:"Electrical", img:"https://qcybangladesh.com/wp-content/uploads/2025/02/QCY-8.png"},
+      {id:30, name:"Hoco EQ24 Estrella Wireless Earbuds", price:950, discount:5, weight:"360g", category:"Electrical", img:"https://www.startech.com.bd/image/cache/catalog/earbuds/hoco/eq24-estrella/eq24-estrella-500x500.webp"},
+      {id:31, name:"Hoco ES64 Sports Bluetooth Wireless Neckband Earphone", price:800, discount:5, weight:"250g", category:"Electrical", img:"https://eraj.com/media/catalog/product/cache/f4f00162adce089edc269ad8235f5877/e/s/es64-03-500x500.jpg"},
+      {id:32, name:"CMF Neckband Pro 50dB ANC Bluetooth Neckband", price:3100, discount:5, weight:"210g", category:"Electrical", img:"https://gadgetnmusic.com/wp-content/uploads/2024/03/CMF-Neckband-Pro-50dB-ANC-Bluetooth-Neckband.jpg"},
+         {id:33, name:"MEKO N3 Sports Wireless Neckband", price:745, discount:5, weight:"260g", category:"Electrical", img:"https://assets.gadgetandgear.com/upload/media/172309474572195.jpeg"},
+     {id:34, name:"JBL Go 4 Portable Bluetooth Speaker", price:4200, discount:5, weight:"900g", category:"Electrical", img:"https://gadgetnmusic.com/wp-content/uploads/2024/03/JBL-Go-4-Portable-Bluetooth-Speaker-1.jpg"},
+      {id:36, name:"SIRIUS 2 BLACK", price:3500, discount:5, weight:"860g", category:"Electrical", img:"https://www.sencor.com/getmedia/53d54418-3de4-4fe8-a503-5edb74cac646/35059173.jpg.aspx?width=2100&height=2100&ext=.jpg"},
+       {id:37, name:"Blue Square BS-222 AC Power Multimedia Speaker", price:4100, discount:5, weight:"970g", category:"Electrical", img:"https://storage.googleapis.com/shy-pub/16980/blue-square-bs222-ac-power-multimedia-speaker-lapt-1702018735379_SKU-0281_0.png"},
+       {id:39, name:"ASUS C3 Full HD Streaming USB Webcam", price:6900, discount:5, weight:"420g", category:"Electrical", img:"https://www.startech.com.bd/image/cache/catalog/webcam/asus/c-3/c3-500x500.jpg"},
+       {id:38, name:"Micropeak High Definition Webcam with Microphone", price:1400, discount:5, weight:"200g", category:"Electrical", img:"https://i5.walmartimages.com/seo/1080P-Web-Cam-HD-Camera-Webcam-with-Mic-Microphone-for-Computer-PC-Laptop-Notebook_dc507d76-2a47-420e-a709-13ddfa1c6396.c2b93dba35f7ed0bb10e6bacac3173a2.jpeg"},
+       {id:40, name:"DJI Lavalier Microphone For Mic 2", price:4500, discount:5, weight:"120g", category:"Electrical", img:"https://sscamerabd.com/wp-content/uploads/2025/04/1705477554_1800670.jpg"},
+       {id:41, name:"Havit MC361 Clip Microphone", price:250, discount:5, weight:"80g", category:"Electrical", img:"https://rajshahigadgethub.com/wp-content/uploads/2021/08/a2dee5e85f3ad175246c45610841326c.jpg"},
+       {id:41, name:"Charmast 20000mAh Power Bank with Built-in Cables", price:6300, discount:5, weight:"2kg", category:"Electrical", img:"https://m.media-amazon.com/images/I/71tsTZoDenL._AC_SL1500_.jpg"},
+       {id:42, name:"Havit PB56 40000mAh Power Bank", price:3900, discount:5, weight:"3.2kg", category:"Electrical", img:"https://www.startech.com.bd/image/cache/catalog/power-bank/havit/pb56/pb56-03-500x500.webp"},
+       {id:43, name:"fx-570ES PLUS Black-2nd Edition Non Programmable Scientific Calculator", price:2000, discount:5, weight:"220g", category:"Electrical", img:"https://casiocalculatorbd.com/wp-content/uploads/2023/08/fx-570ESPLUS-2.jpg"},
+       {id:44, name:"Casio Scientific Calculator, Non Programmable (fx-570ES PLUS)", price:1200, discount:5, weight:"210g", category:"Electrical", img:"https://aotsqatar.com/cdn/shop/files/570.png?v=1689988158"},
+       {id:45, name:"Shop Citizen CT 512 Calculator", price:600, discount:5, weight:"450g", category:"Electrical", img:"https://smartdeal.com.bd/public/uploads/all/sF9lHbYGM7u6S8yfKUBXrHGowToXM6L4cCgt5wC5.jpg"},
+       {id:46, name:"Casio MV-210 Desktop Calculator, Dual Screen", price:1600, discount:5, weight:"650g", category:"Electrical", img:"https://elghazawy.com/storage/104203/%D8%A7%D9%84%D9%87-%D8%AD%D8%A7%D8%B3%D8%A8%D9%87-%D9%85%D9%83%D8%AA%D8%A8%D9%8A%D8%A9-%D9%82%D9%8A%D8%A7%D8%B3%D9%8A%D8%A9-%D9%85%D8%B2%D8%AF%D9%88%D8%AC%D8%A9-%D8%A7%D9%84%D8%B4%D8%A7%D8%B4%D8%A9-MV.210.webp"},
+        {id:47, name:"Tenda F3 Easy Setup Wi-Fi Router", price:1200, discount:5, weight:"350g", category:"Electrical", img:"https://cdn.bdstall.com/product-image/giant_313457.jpeg"},
+        {id:48, name:"TP-Link TL-WR841N 300Mbps Wireless N Router", price:1420, discount:5, weight:"400g", category:"Electrical", img:"https://cdn.bdstall.com/product-image/giant_312929.jpg"},
+       {id:49, name:"TP-Link Deco M4 2 Pack Whole Home Mesh Wi-Fi System", price:6800, discount:5, weight:"1.2kg", category:"Electrical", img:"https://cdn.bdstall.com/product-image/giant_127173.jpg"},
+       {id:50, name:"Large Digital Wall Clock,Digital Clock Display with Temperature and Humidity", price:680, discount:5, weight:"260g", category:"Electrical", img:"https://static-01.daraz.com.bd/p/2bec176a2f854794b4db9867b5b457b0.jpg"},
+        {id:51, name:"3D Digital Clock Wall Clock Smart Alarm Clock With Temperature Display", price:750, discount:5, weight:"230g", category:"Electrical", img:"https://img.lazcdn.com/g/p/ee23838e373d7b7e6ac94dfc5279f711.jpg_720x720q80.jpg"},
+       {id:52, name:"Colorful Egg Humidifier", price:700, discount:5, weight:"200g", category:"Electrical", img:"https://www.gadstyle.com/wp-content/uploads/2024/11/colorful-egg-humidifier-3.webp"},
+        {id:53, name:"Xiaomi Smart Humidifier 2 UV-C Sterilisation 4.5L", price:6990, discount:5, weight:"680g", category:"Electrical", img:"https://www.smarteshopbd.com/wp-content/uploads/2024/05/4.5L-Apps-Supported-Humidifier-Xiaomi.webp"},
+        {id:54, name:"Adata UV128 64GB Black-Blue USB 3.2 Pen Drive", price:700, discount:5, weight:"60g", category:"Electrical", img:"https://www.ryans.com/storage/products/main/adata-uv128-64gb-black-blue-usb-32-pen-21577014443.webp"},
+        {id:55, name:"Transcend V-790 256GB USB 3.1 Pen Drive", price:2300, discount:5, weight:"69g", category:"Electrical", img:"https://www.ryans.com/storage/products/main/transcend-v-790-256gb-usb-31-pen-drive-11595935126.webp"},
+       {id:56, name:"HP 64GB Pendrive Flash Drive USB 3.0 ", price:1000, discount:5, weight:"80g", category:"Electrical", img:"https://www.gadstyle.com/wp-content/uploads/2020/03/hp-x750w-usb-flash-drive-usb-3-0-64gb-high-speed-metal-usb-stick-64gb-pendrive-flash-drive-1.jpg"},
+         {id:57, name:"Transcend 16 GB USB 3.0 Pen Drive", price:500, discount:5, weight:"65g", category:"Electrical", img:"https://i.chaldn.com/_mpimage/transcend-16-gb-usb-30-pen-drive-1-pcs?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D33877&q=best&v=1&m=400&m=1600"},
+       {id:58, name:"Adata 256 GB Premier Class10 Micro SD Card", price:2800, discount:5, weight:"10g", category:"Electrical", img:"https://www.globalbrand.com.bd/image/cache/catalog/memory%20card/Adata/Adata-256-GB-Premier-Class10-Micro-SD-Card-9-320x320.jpg"},
+        {id:59, name:"SanDisk 128Gb SD Card", price:1020, discount:5, weight:"10g", category:"Electrical", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/SD_card_adapters.jpg/250px-SD_card_adapters.jpg"},
+       {id:60, name:"Netac SA500 240GB 2.5 Inch SATAIII SSD", price:2000, discount:5, weight:"450g", category:"Electrical", img:"https://www.ryans.com/storage/products/small/netac-sa500-240gb-25-inch-sataiii-ssd-11664947601.webp"},
+       {id:61, name:"Netac Z9 128GB USB 3.2 Gen 2 Type-C Portable External SSD", price:2500, discount:5, weight:" ", category:"Electrical", img:"https://www.ryans.com/storage/products/main/netac-z9-1tb-usb-32-gen-2-type-c-portable-11664973565.webp"},
+        {id:62, name:"Anonymouse Mask", price:99, discount:5, weight:"16g", category:"Toys", img:"https://static-01.daraz.com.bd/p/ae59e91f7f538cc9327c6f984ec6d061.jpg"},
+        {id:63, name:"Nesloonp Salvador Dalí Mask Costume Heist Fancy Dress Casa del Papel Bella Ciao", price:200, discount:5, weight:"60g", category:"Toys", img:"https://m.media-amazon.com/images/I/41qEfC+8+iL._UY1000_.jpg"},
+       {id:64, name:"Squid Game Front Man Mask Anonymous Party", price:500, discount:5, weight:"50g", category:"Toys", img:"https://i.ebayimg.com/images/g/MJ8AAOSwpttl1Wm4/s-l1200.jpg"},
+       {id:65, name:"Squid Game mask set", price:1500, discount:5, weight:"200g", category:"Toys", img:"https://avatars.mds.yandex.net/i?id=0fe195501c4496c4c3e6d37b533847ac032042c5-4599171-images-thumbs&n=13"},
+       {id:66, name:"BMW E46 M3 (Red) Diecast Car Model", price:1800, discount:5, weight:"750g", category:"Toys", img:"https://cdn11.bigcommerce.com/s-yrkef1j7/images/stencil/500x659/products/23096/109422/QQ20220711201733__42228.1657596121.png?c=2"},
+    
+  {id:67, name:"Range Rover Diecast Metal Toy Car Mode", price:1450, discount:5, weight:"490g", category:"Toys", img:"https://m.media-amazon.com/images/I/61Fne+pDNHL.jpg"},
+        {id:68, name:"Die-Cast Metal Body Toy Car_Roles Royece", price:1800, discount:5, weight:"800g", category:"Toys", img:"https://5.imimg.com/data5/JU/QP/OE/SELLER-79895683/die-cast-metal-body-toy-car-500x500.jpg"},
+         {id:69, name:"Diecast Metal Car 1: 32 Scale Mercedes Benz AMG G 55 63", price:1600, discount:5, weight:"750g", category:"Toys", img:"https://static-01.daraz.com.bd/p/54f5dbc4591e6a11729e7026d4450a65.jpg"},
+       {id:70, name:"Toyota Prado SUV 1:24 Big Size Diecast Scale Model Alloy Metal", price:1450, discount:5, weight:"690g", category:"Toys", img:"https://5.imimg.com/data5/SELLER/Default/2023/4/297713138/MG/TR/UF/95601433/arniyavala-car-model-metal-diecast-alloy-cars-model-toy-car-for-boys-child-kids-gift-toys-vehicle-1-24-for-toyota-prado-suv-white--500x500.jpg"},
+        {id:71, name:"1:18 Scale Die Cast Motorcycle Model", price:680, discount:5, weight:"300g", category:"Toys", img:"https://m.media-amazon.com/images/I/710MXYSCmhS._AC_SL1500_.jpg"},
+        {id:72, name:"Maisto Plastic Jawa Khakhi Miniature Model Bikes; 1:18 Die-Cast Scale Model", price:800, discount:5, weight:"290g", category:"Toys", img:"https://m.media-amazon.com/images/I/31IPhUuVAkL._UF1000,1000_QL80_.jpg"},
+        {id:73, name:"Die cast Motorcycle Toy Bike Scale Model Vehicles Alloy", price:750, discount:5, weight:"300g", category:"Toys", img:"https://www.jiomart.com/images/product/original/rvidqcwgyv/pluspoint-die-cast-motorcycle-toy-bike-scale-model-vehicles-alloy-simulation-superbike-also-for-car-dashboard-kids-adult-product-images-orvidqcwgyv-p611990733-0-202507191343.jpg?im=Resize=(1000,1000)"},
+        {id:74, name:"Tamiya Kawasaki Ninja ZX-RR 1/12 ", price:980, discount:5, weight:"320g", category:"Toys", img:"https://live.staticflickr.com/65535/50435336922_b4509766f5_c.jpg"},
+       {id:75, name:"HONDA CBR 1000RR-R FIREBLADE SP PLASTIC MODEL KIT 1/12", price:850, discount:5, weight:"300g", category:"Toys", img:"https://denkit.co.za/wp-content/uploads/2021/05/14138.jpg"},
+        {id:76, name:"1:16 Remote Control Car Spray Drift High-speed Rechargeable Off-road Vehicle", price:1500, discount:5, weight:"670g", category:"Toys", img:"https://static-01.daraz.com.bd/p/b1260a1e07a84d2febf0ca1de262f89f.jpg"},
+       {id:77, name:"Rechargeable Remote control car ", price:1200, discount:5, weight:"720g", category:"Toys", img:"https://hattimatim.com.bd/storage/18102021/IMG_6556.JPG"}, 
+       {id:78, name:"Flytec New Fy-16101 1/16 RC Car with LED Headlights 4WD 38km/H High Speed", price:3600, discount:5, weight:"920g", category:"Toys", img:"https://image.made-in-china.com/2f0j00FuMqNsorLhpl/Flytec-New-Fy-16101-1-16-RC-Car-with-LED-Headlights-4WD-38km-H-High-Speed-Remote-Control-Vehicles-off-Road-RC-Monster-Truck-for-Kids.webp"},
+        {id:79, name:"Lamborgini RC Vehicles remote control with rechargable", price:1400, discount:5, weight:"620g", category:"Toys", img:"https://static-01.daraz.com.bd/p/6b8a92fa51c381faac5a26ab693b9a0f.jpg"},
+        {id:80, name:"Playtime Kids Building Block", price:120, discount:5, weight:"500g", category:"Toys", img:"https://rflexclusivebd.com/images/detailed/124/Kids-building-block-3.jpg"},
+        {id:81, name:"Best RFL clock toy of educational toys", price:250, discount:5, weight:"500g", category:"Toys", img:"https://rflbestbuy.com/images/detailed/37/0302249_smart-building-block-junior.jpeg"},
+       {id:82, name:"Playtime Fantasy Safari Animal ", price:350, discount:5, weight:"500g", category:"Toys", img:"https://rflexclusivebd.com/images/detailed/124/fantasy-animal-safari.jpg"},
+        {id:83, name:"32pcs+ full rubber body Mini Animal Zoo set", price:500, discount:5, weight:"650g", category:"Toys", img:"https://img.drz.lazcdn.com/static/bd/p/79a94b3de99a8831aa1f6f4fb985a0bf.jpg_960x960q80.jpg_.webp"},
+
+        {id:84, name:"Plain Classic Fit T-Shirt", price:700, discount:5, weight:"M", category:"Cloths", img:"https://nobero.com/cdn/shop/files/og.jpg?v=1744007258"},
+       {id:85, name:"Black T-shirt", price:650, discount:5, weight:"M", category:"Cloths", img:"https://xcdn.next.co.uk/common/items/default/default/itemimages/3_4Ratio/product/lge/C04288s10.jpg?im=Resize,width=750"},
+        {id:86, name:"Formal Shirt Full | FSF 1170", price:2350, discount:5, weight:"M", category:"Cloths", img:"https://mensworld.com.bd/wp-content/uploads/2023/09/FSF-1170.jpg"},
+        {id:87, name:"Black Men's Casual Shirt ", price:2000, discount:5, weight:"M", category:"Cloths", img:"https://toptenmartltd.com/wp-content/uploads/2024/08/Casual-Shirt-3.jpg"},
+        {id:89, name:"Cotton Plain/solid Men Plain White Shirt", price:2100, discount:5, weight:"M", category:"Cloths", img:"https://5.imimg.com/data5/UC/XP/RF/SELLER-3370114/white-shirt-500x500.jpg"},
+       {id:90, name:"Light Blue Wash Jins Pant", price:900, discount:5, weight:"L", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/febc04d27c43de6d7496704252737c38.jpg_720x720q80.jpg"},
+        {id:91, name:"2024 Classic Style Men's Black Blue Regular Fit Jeans", price:800, discount:5, weight:"L", category:"Cloths", img:"https://i.pinimg.com/736x/b8/b7/f8/b8b7f8bc866a1e995d37a3734e3d1326.jpg"},
+       {id:92, name:"Autumn Winter New Business Men's Jeans Classic Fashion Stretch", price:800, discount:5, weight:"L", category:"Cloths", img:"https://ae01.alicdn.com/kf/Sc7be2c6a62fa447d8dd51b880616a550c.jpg"},
+         {id:93, name:"Men's Formal Pants", price:700, discount:5, weight:"L", category:"Cloths", img:"https://www.arizalife.com/wp-content/uploads/2025/07/Knit-Spandex-Cotton-L.Coffee-Slim-Fit-Mens-Formal-Pant-1-819x1024.jpg"},
+        {id:94, name:"Elegant Men's Formal Pant", price:700, discount:5, weight:"L", category:"Cloths", img:"https://klothen.shop/cdn/shop/files/1_bfc0b8f7-ef67-42eb-ba7b-163d36a3d4e4.webp?v=1750161515&width=600"},
+         {id:95, name:"Premium Black Dress Pan", price:800, discount:5, weight:"L", category:"Cloths", img:"https://richmanbd.com/wp-content/uploads/2024/12/40a.jpg"},
+       {id:96, name:"Htcenly Running Shoes Men Fashion Sneakers Casual Walking", price:1400, discount:5, weight:"42", category:"Cloths", img:"https://i5.walmartimages.com/seo/Htcenly-Running-Shoes-Men-Fashion-Sneakers-Casual-Walking-Shoes-Sport-Athletic-Shoes-Lightweight-Breathable-Comfortable_4114141f-7d26-4dd7-933d-babc24080395.516ad145e1a1d8d82a801ac48231950d.jpeg"},
+        {id:97, name:"Casual PU leather shoes ", price:1800, discount:5, weight:"42", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/563df53262050b8e1fdb12d93c60ab81.jpg_720x720q80.jpg"},
+        {id:98, name:"Clarks Howard Walk Black Leather", price:1800, discount:5, weight:"42", category:"Cloths", img:"https://www.humphriesshoes.co.uk/images/products/standard/12287.jpg"},
+        {id:99, name:"New Trendy Look Famous Very Stylish Black Square Frame Sunglass", price:1200, discount:5, weight:"100g", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/71fcddb40be7d45bc4bed8c55db31c89.jpg_720x720q80.jpg"},
+       {id:100, name:"Classic Round Metal Frame Polarized Sunglasses", price:800, discount:5, weight:"90g", category:"Cloths", img:"https://m.media-amazon.com/images/I/61aYxjMzv0S._AC_SL1500_.jpg"},
+         {id:101, name:"Sunglasses UY5412", price:850, discount:5, weight:"100g", category:"Cloths", img:"https://sunglassic.com/cdn/shop/files/preview_images/FrancisSilverBlackRectangleSunglasses_1_1.jpg?v=1744788543"},
+       {id:102, name:"Oakley Jawbreaker", price:850, discount:5, weight:"110g", category:"Cloths", img:"https://cdn11.bigcommerce.com/s-8a17r5u7/images/stencil/original/products/10752/48729/0OO9290__929020__STD__noshad__qt__63573.1724165790.jpg"},
+        {id:103, name:"Retro Millionaire Sunglasses", price:500, discount:5, weight:"100g", category:"Cloths", img:"https://img.fruugo.com/product/1/13/273373131_max.jpg"},
+        {id:104, name:"Full White Cotton Ny Logo Curved Baseball Cap", price:500, discount:5, weight:"120g", category:"Cloths", img:"https://static-01.daraz.com.bd/p/d9420cd84073f84658919b0a33055bba.jpg"},
+         {id:105, name:"Close Baseball Cap for Men/women", price:500, discount:5, weight:"100g", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/2091c75fd6bc296b6317df7c04ba841f.jpg_720x720q80.jpg"},
+        {id:106, name:"Denim Baseball Cap", price:500, discount:5, weight:"180g", category:"Cloths", img:"https://www.madebycooper.co.uk/images/jcogs_img/cache/parts-of-a-baseball-cap-guide_-_28de80_-_d25ab1746a6263a315533c7d1628732318646ac5.jpg"},
+         {id:107, name:"Eyeglass ER548", price:560, discount:5, weight:"80g", category:"Cloths", img:"https://glassesbd.com/wp-content/uploads/2024/08/DSF7969-Photoroom-1500x1500-1-1-600x600.jpg"},
+       {id:108, name:"Dukpion Glass 545", price:540, discount:5, weight:"75g", category:"Cloths", img:"https://dukpion.com.bd/wp-content/uploads/2025/07/DKE06652-52-16-142-1299TK-1-300x300.jpg"},
+        {id:109, name:"Optical Glass 5462", price:800, discount:5, weight:"65", category:"Cloths", img:"https://global.caremebd.com/cdn/shop/files/An-usAQhn_nRQveSQuQcx8AmTgroMkCpB6O58aepHea-eQrxtJqssuLrplwnj-E06q3SehcvDEc4zc4tugj314Pot_6zgkPlaAYFiOKo05xbVJztO27JpKYweY_DaONSJMl6yGSalUH8MSzhutIRL8Pf-BcYARpObYol6tEMDn76FbKEsYImLwH_900x.jpg?v=1739052169"},
+       {id:110, name:"Retro Handmade Turkish Ring For Men ", price:500, discount:5, weight:"89g", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/c65f8977d5c7306c2457ac05f608573c.jpg_960x960q80.jpg_.webp"},
+        {id:111, name:"100% 999 Pure Sterling Silver Jewelry Lotus Flower Open Ring", price:420, discount:5, weight:"110g", category:"Cloths", img:"https://img.drz.lazcdn.com/static/bd/p/327b54912747c1431a3da6c53f471581.jpg_720x720q80.jpg"},
+       {id:112, name:"The Apollo Middle fingure ring", price:500, discount:5, weight:"90g", category:"Cloths", img:"https://rusticandmain.com/cdn/shop/files/apollo-sterling-silver-hammered-mens-wedding-band-rustic-and-main-rings_3_800x.jpg?v=1734037402"},
+         {id:113, name:"5 Bold Silver Chain ", price:400, discount:5, weight:"120g", category:"Cloths", img:"https://www.giva.co/cdn/shop/articles/1_A_close-up_photo_of_a_man_wearing_a_chunky_silver_chain_necklace.jpg?v=1711445890"},
+        {id:114, name:"Men's Chain / Silver 6mm Curb Chain Necklace", price:400, discount:5, weight:"110g", category:"Cloths", img:"https://i.etsystatic.com/25844886/r/il/17f65d/5471411799/il_fullxfull.5471411799_89es.jpg"},
+       {id:115, name:"Rupchanda Chinigura Premium Aromatic Rice", price:150, discount:5, weight:"1KG", category:"Foods", img:"https://i.chaldn.com/_mpimage/rupchanda-chinigura-premium-aromatic-rice-1-kg?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D48092&q=best&v=1"},
+       {id:116, name:"Chashi Aromatic Chinigura Rice", price:160, discount:5, weight:"1kg", category:"Foods", img:"https://static-01.daraz.com.bd/p/29a9478d921228e1912c1616a04369c3.jpg"},
+        {id:117, name:"Teer Chinigura Rice", price:155, discount:5, weight:"1kg", category:"Foods", img:"https://be.quickybd.com/admin/public/productImage/682ddf05d626e.jpg"},
+        {id:118, name:"Fresh Chinigura Chal", price:170, discount:5, weight:"1kg", category:"Foods", img:"https://www.babycare.com.bd/image/cache/catalog/new3/new4/new4/new5/Capture5-500x500.PNG"},
+        {id:119, name:"Shop Pran Chinigura Rice", price:165, discount:5, weight:"1kg", category:"Foods", img:"https://d2t8nl1y0ie1km.cloudfront.net/images/65fa94d5115075f231ec4f69_Pran-Chinigura-Rice-1Kg_1.webp"},
+       {id:120, name:"ফরচুন বিরিয়ানি স্পেশাল বাসমতি চাল ", price:200, discount:5, weight:"1kg", category:"Foods", img:"https://bdtotals.com/wp-content/uploads/2024/09/Pran-Miniket-Rice.jpg"},
+       {id:121, name:"Basmati Rice", price:190, discount:5, weight:"1kg", category:"Foods", img:"https://organiconline.com.bd/wp-content/uploads/2025/03/basmati-rice.webp"},
+        {id:122, name:"Bashundhara Flour (Atta) ", price:75, discount:5, weight:"1kg", category:"Foods", img:"https://i.chaldn.com/_mpimage/bashundhara-flour-atta-2-kg?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D125452&q=best&v=1"},
+         {id:123, name:"Fresh Flour (Atta)", price:65, discount:5, weight:"1kg", category:"Foods", img:"https://i.chaldn.com/_mpimage/fresh-flour-atta-2-kg?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D97220&q=best&v=1"},
+       {id:124, name:"Teer Whole Wheat Flour (Atta)", price:170, discount:5, weight:"2kg", category:"Foods", img:"https://i.chaldn.com/_mpimage/teer-whole-wheat-flour-atta-2-kg?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D101279&q=best&v=1"},
+         {id:125, name:"Akher chini", price:75, discount:5, weight:"1kg", category:"Foods", img:"https://static-01.daraz.com.bd/p/e22584b7e2dd789a64ac47c253dcc260.png"},
+       {id:126, name:"Fresh Suger", price:80, discount:5, weight:"1kg", category:"Foods", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU_Q3XI13EBe5cXn8nyOvtaYY6ugFmLiRXO6tavYKdOS9-Vp5jgEsSdgzAJ0JG10Jg6mc&usqp=CAU"},
+        {id:127, name:"ACI pure salt", price:40, discount:5, weight:"1kg", category:"Foods", img:"https://shodagor.com/public/uploads/all/AardZ.png"},
+       {id:128, name:"Radhuni Garam Masala Powder", price:70, discount:5, weight:"40g", category:"Foods", img:"https://static-01.daraz.com.bd/p/2699bd12da13a45f0067e13e03d45bea.jpg"},
+        {id:129, name:"Radhuni Chat Masala", price:70, discount:5, weight:"50g", category:"Foods", img:"https://img.drz.lazcdn.com/static/bd/p/a921d34e14788ddbe6396d42f1614152.jpg_960x960q80.jpg_.webp"},
+        {id:130, name:"Radhuni Biryani Masala ", price:60, discount:5, weight:"60g", category:"Foods", img:"https://i.chaldn.com/_mpimage/radhuni-biryani-masala-40-gm?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D109980&q=best&v=1"},
+         {id:131, name:"Radhoni rost moshla", price:65, discount:5, weight:"60g", category:"Foods", img:"https://i.chaldn.com/_mpimage/radhuni-roast-masala-35-gm?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D110797&q=best&v=1&m=400"},
+        {id:132, name:"রাধুনি মেজবান গরুর মাংসের মসালা", price:55, discount:5, weight:"70g", category:"Foods", img:"https://dookanpat.s3.ap-southeast-1.amazonaws.com/uploads/all/PUG5mOx8TETF0gQsSMb9p916olcfvIE7xm6SZz1q.jpg"},
+        {id:133, name:"Tel Ghor Turmeric Powder-Holud Gura ", price:115, discount:5, weight:"200g", category:"Foods", img:"https://img.drz.lazcdn.com/static/bd/p/527a59ae007aabbb1a6c999f016ca7c8.jpg_960x960q80.jpg_.webp"},
+        {id:134, name:"Radhoni Halud gura", price:180, discount:5, weight:"500g", category:"Foods", img:"https://www.al-layl.com/wp-content/uploads/2022/06/Holud-Gura-Turmeric-Powder-%E2%80%93-500-gm-1.jpg"},
+         {id:135, name:"Saad Lal Morich Gura ", price:170, discount:5, weight:"250g", category:"Foods", img:"https://rokbucket.rokomari.io/ProductNew20190903/260X372/Saad_Lal_Morich_Gura_Red_Chilli_Powder_2-Saad-93e30-440700.png"},
+        {id:136, name:"Radhoni Moricher gura", price:250, discount:5, weight:"500g", category:"Foods", img:"https://dtt1c9id3txwq.cloudfront.net/assets/images/000/879/535/original/Radhuni_Chili_%28Morich%29_Powder_200gm.PNG?1588948963"},
+         {id:137, name:"রাঁধুনী ধনিয়ার গুঁড়া", price:120, discount:5, weight:"220g", category:"Foods", img:"https://sukhibazar.com/wp-content/uploads/2023/09/Radhuni-doniar-gura-200gm.jpg"},
+        {id:138, name:"White Vinegar", price:55, discount:5, weight:"250g", category:"Foods", img:"https://gbegbe.com/images/thumbs/0002556_radhuni-white-vinegar-280-ml_360.png"},
+        {id:139, name:"Shop BD Food Hot Chilli Sauce ", price:150, discount:5, weight:"360g", category:"Foods", img:"https://d2t8nl1y0ie1km.cloudfront.net/images/65fa95c4115075f231ecc9e7_BD-Food-Hot-Chilli-Sauce-360gm_1.webp"},
+       {id:140, name:"Radhuni Kasundi ", price:65, discount:5, weight:"285ml", category:"Foods", img:"https://rokbucket.rokomari.io/ProductNew20190903/260X372/Radhuni_Kasundi_285_ml-Radhuni-0793d-372115.png"},
+         {id:141, name:"Khichuri masala - Afram Khichuri masala", price:60, discount:5, weight:"40g", category:"Foods", img:"https://img.drz.lazcdn.com/static/bd/p/390ea555dc47833784bbc6d9eee3fdd4.png_720x720q80.png"},
+       {id:142, name:"A 2-liter decorated/painted pitcher", price:250, discount:5, weight:"1kg", category:"Crafts", img:"https://i.pinimg.com/236x/01/f1/60/01f160f0ff2208a974c03375e754b08d.jpg"},
+       {id:143, name:"Handcrafted Clay Jug", price:250, discount:5, weight:"1kg", category:"Crafts", img:"https://img.drz.lazcdn.com/static/bd/p/dfaf9d77ccf79a4811f74cb6276979bf.jpg_720x720q80.jpg"},
+        {id:144, name:"Minimal Clay tea cup", price:150, discount:5, weight:"700g", category:"Crafts", img:"https://static-01.daraz.com.bd/p/ad826182686815ca94b1a2125a1a7219.jpg"},
+        {id:145, name:"Clay Tea cup big", price:120, discount:5, weight:"560g", category:"Crafts", img:"https://static-01.daraz.com.bd/p/06cd39ed2f4c3f0bcabd653c6b223bc7.jpg"},
+       {id:146, name:"Clay wine glass 2pcs", price:500, discount:5, weight:"1kg", category:"Crafts", img:"https://craftzone.in/backend/uploads/products/SKU0000000543/8ee75d65d56d410b87d90fa0fe809093.webp"},
+
+        {id:147, name:"Clay Mosquito coils Stand", price:100, discount:10, weight:"1kg", category:"Crafts", img:"https://static-01.daraz.com.bd/p/80703c4abbef435dea389d903ae574ce.jpg"},
+       {id:148, name:"Clay Flower Vase ", price:400, discount:5, weight:"1.6kg", category:"Crafts", img:"https://img.drz.lazcdn.com/static/bd/p/c998080a4a67d3043de625688a631220.jpg_720x720q80.jpg"},
+        {id:149, name:"Clay flower vase for room decoring", price:580, discount:5, weight:"1kg", category:"Crafts", img:"https://img.drz.lazcdn.com/static/bd/p/021ff1528a6c2c9a6f99fce339e622e9.jpg_720x720q80.jpg"},
+         {id:150, name:"Mexican Clay Flower Vase ", price:800, discount:5, weight:"1.2kg", category:"Crafts", img:"https://i.ebayimg.com/images/g/j6EAAOSw2eFjA6w8/s-l1600.jpg"},
+       {id:151, name:"Clay plate. 6 pieces Matir plate", price:1600, discount:6, weight:"5kg", category:"Crafts", img:"https://static-01.daraz.com.bd/p/67bda408272f7e82ea3da4a176695c2f.png"},
+        {id:152, name:"Matir Basanpatra", price:180, discount:5, weight:"1kg", category:"Crafts", img:"https://necessityestore.in/wp-content/uploads/2021/01/WhatsApp-Image-2020-12-24-at-5.32.52-PM-300x300.jpeg"},
+        {id:153, name:"3pcs wallmates", price:600, discount:5, weight:"1.2kg", category:"Crafts", img:"https://static-01.daraz.com.bd/p/ef84ea2be36749a789f99049da42037f.jpg"},
+       {id:154, name:"4PCS of wallmates quotes", price:1200, discount:5, weight:"1.5kg", category:"Crafts", img:"https://media.wallmantra.store/product/other/wallmantra-fitness-motivation-gym-frames-set-of-4-with-break-resistant-clear-acrylic-glass-8E7E-large.webp"},
+        {id:155, name:"Water flux Bottle Sipper", price:800, discount:5, weight:"500ml", category:"Crafts", img:"https://img.drz.lazcdn.com/static/bd/p/d2b9a8eb63a252856bff4c8f21f60ad1.png_960x960q80.png_.webp"},
+         {id:156, name:"Stainless still water flux", price:700, discount:5, weight:"500ml", category:"Crafts", img:"https://static-01.daraz.com.bd/p/6bff236a917bd186b95053383fe78202.jpg"},
+        {id:157, name:"Transparent 500ml Portable Plastic Water Bottle", price:500, discount:5, weight:"500ml", category:"Crafts", img:"https://smartdeal.com.bd/public/uploads/all/CipE4pd6Rql5ZIZasBvugGu7FdBZqEVU4O8VpaEO.webp"},
+        {id:158, name:"Tri-Colour Gradient Mug Cycling Water Bottle", price:500, discount:5, weight:"500ml", category:"Crafts", img:"https://image.made-in-china.com/202f0j00qoskIiZLfQbK/Tri-Colour-Gradient-Mug-Cycling-Water-Bottle-Rainbow-Sports-Bottle.webp"},
+        {id:159, name:"Sports trasparent bottle", price:450, discount:5, weight:"500ml", category:"Crafts", img:"https://ae01.alicdn.com/kf/S5b7252e705374bfa98269c00771d5919W.jpg"},
+         {id:160, name:"Racer Tiffin Box Winner 500 ML", price:400, discount:5, weight:"500ml", category:"Crafts", img:"https://images.othoba.com/images/thumbs/0710096_smart-single-layer-tiffin-box-550-ml.webp"},
+       {id:161, name:"2 Compartment Leak Proof Insulated Stainless Steel", price:1200, discount:5, weight:"1kg", category:"Crafts", img:"https://ds.rokomari.store/rokomari110/ProductNew20190903/260X372/2_Compartment_Leak_Proof_Insulated_Stain-Non_Brand-d8257-322082.png"},
+       {id:162, name:"Luxury Long Wallet for Men", price:1200, discount:5, weight:"120g", category:"accessories", img:"https://images.othoba.com/images/thumbs/0544260_luxury-long-wallet-for-men-women-black.jpeg"},
+        {id:163, name:"Buy money bag men brand", price:800, discount:5, weight:"180g", category:"accessories", img:"https://static-01.daraz.com.bd/p/mdc/752d883e86454906f7898d7af9e6ad5a.jpg"},
+        {id:164, name:"The Men's Bifold Wallet", price:1500, discount:5, weight:"200g", category:"accessories", img:"https://kbnjewellery.com.au/cdn/shop/files/mbark.studio_KBN_MENS_WEBSIZE-25.jpg?v=1688592064&width=1600"},
+        {id:165, name:"Flower Story Men's Perfume Set Silver Charm Mountain Spring Fresh Light Fragrance(4set)", price:1700, discount:5, weight:"800g", category:"accessories", img:"https://img.drz.lazcdn.com/static/bd/p/2517db92feb37892b8eab5493a63f140.jpg_720x720q80.jpg"},
+        {id:166, name:"The Man Company Eau De Parfum Intense", price:1900, discount:5, weight:"150ml", category:"accessories", img:"https://bk.shajgoj.com/storage/2023/08/The-Man-Company-Eau-De-Parfum-Intense.jpg"},
+         {id:167, name:"Intense for Men", price:700, discount:5, weight:"100ml", category:"accessories", img:"https://www.dbcosmetics.com.au/cdn/shop/files/fccd45f11a085150f21c574bf2d71beee34a8a25eb54ba32ec8ef4ba7ae7557e.jpg?v=1741919640&width=2000"},
+        {id:168, name:"Pure Black Perfume", price:1500, discount:7, weight:"150ml", category:"accessories", img:"https://static-01.daraz.com.bd/p/d86cd49281381bd0d05b4586bd7c9887.jpg"},
+        {id:169, name:"Royal Mirage Original", price:1600, discount:7, weight:"120", category:"accessories", img:"https://cdn2.arogga.com/eyJidWNrZXQiOiJhcm9nZ2EiLCJrZXkiOiJtZWRpY2luZVwvNjFcLzYxMjQ2LVJveWFsLU1pcmFnZS1PcmlnaW5hbC0xMjBtbC1FREMtU3ByYXktMTIwbWwtam04bC5wbmciLCJlZGl0cyI6W119"},
+        {id:170, name:"Follow Me Hair Gel for Men", price:600, discount:5, weight:"120ml", category:"accessories", img:"https://img.drz.lazcdn.com/static/bd/p/22f8a3edb11794c9d43456f2f145edac.jpg_720x720q80.jpg"},
+        {id:171, name:"GATSBY Hair Gel Super Hard 30 G Strong Hold Styling Gel for Men", price:700, discount:5, weight:"100ml", category:"accessories", img:"https://static-01.daraz.com.bd/p/245743cd0d61e1d7788a725ba771f3ed.jpg"},
+         {id:172, name:"Hair Gel from Turkey _DORSH", price:1600, discount:5, weight:"400ml", category:"accessories", img:"https://s.alicdn.com/@sc04/kf/A2e654d587fd445b0803a055c9d135fd6p/DORSH-HAIR-STYLE-GEL-Shaving-Gel-S10-1000ML-Strong-Hold-Hair-Gell-From-Turkey-with-Low-Price.jpg"},
+        {id:173, name:"6 piece 6 different smell flavour combo RT perfume Ator", price:800, discount:5, weight:"50ml", category:"accessories", img:"https://img.drz.lazcdn.com/static/bd/p/423c4cccc410b1472647afbcb85e5fe2.jpg_720x720q80.jpg"},
+        {id:174, name:"Attar - Al Rehab Soft - 6 Ml - Ator ", price:200, discount:5, weight:"60ml", category:"accessories", img:"https://img.drz.lazcdn.com/static/bd/p/e52a57167a186fb1d81b9398313ef5c7.jpg_720x720q80.jpg"},
+       {id:175, name:"Paris Aroma Attar for men ", price:1200, discount:5, weight:"6ml", category:"accessories", img:"https://img.drz.lazcdn.com/static/bd/p/76f14bb802acc4633c91034bdd6f568e.png_720x720q80.png"},
+        {id:176, name:"Fresh Soyabin oil", price:970, discount:5, weight:"5L", category:"Foods", img:"https://i.chaldn.com/_mpimage/fresh-fortified-soyabean-oil-5-ltr?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D135116&q=best&v=1"},
+         
+       
+        {id:177, name:"Surf Excel Matic Liquid Detergent", price:210, discount:16, weight:"500ml", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/6f62df95191350909080ac68c24f3abe.jpg"},
+       {id:178, name:"Liquid Hand Soap Zepto Brand Antibacterial Antiviral", price:160, discount:5, weight:"500ml", category:"Toilettrease", img:"https://fixit.com.bd/wp-content/uploads/2023/09/hand-soap-500ml-1.webp"},
+        {id:179, name:"Dettol Liquid Hand Wash Soap Original", price:200, discount:5, weight:"200ml", category:"Toilettrease", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlH0cB0qMSHZiMb5G5s6s9wsG508U5Z6_SpQ&s"},
+       {id:180, name:"Dettol Original Liquid Handwash (Refill)", price:150, discount:5, weight:"175ml", category:"Toilettrease", img:"https://www.quickpantry.in/cdn/shop/products/dettol-original-liquid-handwash-refill-175-ml-quick-pantry.jpg?v=1710538407"},
+        {id:181, name:"Godrej Magic Ready To Mix Hand Wash (Neem & Aloevera)", price:40, discount:5, weight:"9g", category:"Toilettrease", img:"https://cdn2.arogga.com/eyJidWNrZXQiOiJhcm9nZ2EiLCJrZXkiOiJQcm9kdWN0LXBfaW1hZ2VzXC80NjkzNlwvNDY5MzYtbWFnaWMtaGFuZC13YXNoLTIwMG1sLWNvcHktMXpmY2x5LmpwZWciLCJlZGl0cyI6W119"},
+        {id:182, name:"Skinzen Lavender Haze Shower Gel Bodywash", price:500, discount:5, weight:"250ml", category:"Toilettrease", img:"https://cdn2.arogga.com/eyJidWNrZXQiOiJhcm9nZ2EiLCJrZXkiOiJQcm9kdWN0LXBfaW1hZ2VzXC83ODY0N1wvNzg2NDctMDQtMjAyNS0wMy0yMFQxNDI5NTMtbzRuOXljLmpwZWciLCJlZGl0cyI6W119"},
+        {id:183, name:"SKINO STRAWBERRY+ROSE COMBO SCENTED SHOWER GEL", price:430, discount:5, weight:"220ml", category:"Toilettrease", img:"https://bd-live-21.slatic.net/kf/S2c2e3d5791914dec997876bcea525f106.jpg"},
+        {id:184, name:"SKINO LAVENDER SOOTHING SHOWER GEL", price:140, discount:5, weight:"220ml", category:"Toilettrease", img:"https://bbazar.com.bd/backend/product/gallery/upou13bOkuryasS4NjL7MYwjPTb58UoptGXcwlrB.jpg"},
+        {id:185, name:"Tresemme Keratin Smooth Shampoo", price:2100, discount:5, weight:"1L", category:"Toilettrease", img:"https://img.drz.lazcdn.com/static/bd/p/57ea8aa00ed0840b134e5cd6fce6412b.png_720x720q80.png"},
+         {id:186, name:"Buy 1 Natura Grow Shampoo + Conditioner 350ml & Get 1 Natura Grow Hair Oil 100ml free", price:400, discount:5, weight:"350ml", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/8ef9828950bfc57486e36ce6fa03db8f.jpg"},
+        {id:187, name:"L'Oreal Paris Elvive Colour Protect Purple Shampoo", price:1500, discount:5, weight:"350ml", category:"Toilettrease", img:"https://bk.shajgoj.com/storage/2024/11/loreal-paris-elvive-colour-protect-purple-shampoo-1.jpg"},
+        {id:188, name:"Aarong Earth Hair Oil", price:340, discount:5, weight:"200ml", category:"Toilettrease", img:"https://img.drz.lazcdn.com/static/bd/p/67b1cf9ef8f9364124b3ce15964e4bf1.jpg_720x720q80.jpg"},
+        {id:189, name:"Aarong Earth Pure Sesame Oil for Hair and Skin", price:340, discount:5, weight:"200ml", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/4c9b67e50b527e9e338791eefc07b05c.jpg"},
+        {id:190, name:"aarong-earth-hair-oil-with-black-seed-sesame-extract", price:360, discount:5, weight:"200ml", category:"Toilettrease", img:"https://mcprod.aarong.com/media/catalog/product/1/2/1250000000056.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=&width="},
+        {id:191, name:"aarong-earth-herbal-hair-pack-with-sesame-oil", price:120, discount:5, weight:"100g", category:"Toilettrease", img:"https://mcprod.aarong.com/media/catalog/product/1/2/1250000000023_2.jpg?optimize=high&bg-color=255,255,255&fit=bounds&height=&width="},
+       {id:192, name:"Johnson’s Baby Soap", price:220, discount:5, weight:"75g", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/442155fabd9b85920478da48a835972d.jpg"},
+       {id:193, name:"Wheel Washing (Detergent) Powder 2in1 Clean & Fresh", price:130, discount:5, weight:"1kg", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/84e6d8df708471a86189178de66da1e2.jpg"},
+        {id:194, name:"Rin Advanced Synthetic Laundry Detergent Powder", price:130, discount:5, weight:"1kg", category:"Toilettrease", img:"https://static-01.daraz.com.bd/p/04f5b2a1b520994e2902f92e3e8193ff.jpg"},
+        {id:195, name:"Solderless PCB Breadboard MB102", price:90, discount:5, weight:"150g", category:"Engineers Choice", img:"https://www.kaziexpress.com/wp-content/uploads/2019/02/solderless-pcb-breadboard-mb102.jpg"},
+        {id:196, name:"Breadboard 400 Point ", price:50, discount:5, weight:"80g", category:"Engineers Choice", img:"https://admin.techshopbd.com/uploads/product/Breadboard(400Point).jpg"},
+        {id:197, name:"Male to Male jumper wire", price:80, discount:5, weight:"20pcs", category:"Engineers Choice", img:"https://5.imimg.com/data5/SELLER/Default/2020/9/EB/ZP/HP/20589996/male-to-male-jumper-wire.jpg"},
+        {id:198, name:"20 pcs Male to Female jumper wire ", price:80, discount:5, weight:"20pcs", category:"Engineers Choice", img:"https://static-01.daraz.com.bd/p/d8601c8ed37a9b721c42c604f147a70d.jpg"},
+        {id:199, name:"Female to Female jumper wire", price:80, discount:5, weight:"20pcs", category:"Engineers Choice", img:"https://static-01.daraz.com.bd/p/5b1fd3eb4becd8e0c348b8c7ed98d9ea.jpg"},
+        {id:200, name:"Arduino Uno R3", price:950, discount:5, weight:"120g", category:"Engineers Choice", img:"https://img.drz.lazcdn.com/static/bd/p/18b640fe0ccd40a0801773bf383c4ebb.jpg_720x720q80.jpg_.webp"},
+        {id:201, name:"Arduino Nano V3.0", price:450, discount:5, weight:"50g", category:"Engineers Choice", img:"https://www.bdtronics.com/pub/media/catalog/product/a/r/arduino-nano.jpg"},
+        {id:202, name:"ESP32 WROOM 32E", price:550, discount:5, weight:"82g", category:"Engineers Choice", img:"https://docs.sunfounder.com/projects/esp32-starter-kit/en/latest/_images/esp32_wroom_32e.jpg"},
+        {id:203, name:"OLED Display Blue I2C 128x64 0.96 inch", price:450, discount:5, weight:"49g", category:"Engineers Choice", img:"https://admin.techshopbd.com/uploads/product/OLEDDisplayBlueI2C128x640.96.jpg"},
+        {id:204, name:"REES52 ARDUINO Compatible 16x2 LCD Display", price:250, discount:5, weight:"160g", category:"Engineers Choice", img:"https://m.media-amazon.com/images/I/51zcXVZ+P7L.jpg"},
+       // {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+       //  {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+      //  {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+       // {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+       //  {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+      //  {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+       // {id:27, name:" ", price: , discount:5, weight:" ", category:"Engineers Choice", img:" "},
+       
+       
+       
+     ]; 
+ 
+
+
+  /***********************
+   * State & Helpers
+   ***********************/
+  let cart = {}; // { productId: {product, qty} }
+  const cartCount = document.getElementById('cartCount');
+  const cartDropdown = document.getElementById('cartDropdown');
+  const cartItemsWrap = document.getElementById('cartItemsWrap');
+  const cartTotalEl = document.getElementById('cartTotal');
+
+  function formatPrice(n){ return "৳" + n.toFixed(0); }
+
+  function calcDiscountPrice(p, d){
+    if(!d) return p;
+    return Math.round(p * (1 - d/100));
+  }
+
+  function updateCartUI(){
+    const items = Object.values(cart);
+    let total = 0, totalQty = 0;
+    cartItemsWrap.innerHTML = "";
+    if(items.length===0){
+      cartItemsWrap.innerHTML = '<div style="text-align:center;color:var(--muted);padding:8px 0">Cart is empty</div>';
+    } else {
+      items.forEach(it=>{
+        const {product, qty} = it;
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <img src="${product.img}" alt="${product.name}">
+          <div class="meta">
+            <b>${product.name}</b>
+            <div class="small">Qty: ${qty} · ${product.weight}</div>
+            <div class="small">${product.discount?product.discount + "% off":""}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:700">${formatPrice(calcDiscountPrice(product.price, product.discount)*qty)}</div>
+            <div style="margin-top:6px">
+              <button class="btn btn-add" data-action="dec" data-id="${product.id}">-</button>
+              <button class="btn btn-buy" data-action="inc" data-id="${product.id}">+</button>
+            </div>
+          </div>
+        `;
+        cartItemsWrap.appendChild(row);
+        total += calcDiscountPrice(product.price, product.discount)*qty;
+        totalQty += qty;
+      });
+    }
+    cartCount.innerText = totalQty;
+    cartTotalEl.innerText = "Total: " + formatPrice(total);
+  }
+
+  function addToCart(product, qty=1){
+    if(cart[product.id]){
+      cart[product.id].qty += qty;
+    } else {
+      cart[product.id] = {product: product, qty: qty};
+    }
+    updateCartUI();
+  }
+
+  function removeFromCart(productId){
+    delete cart[productId];
+    updateCartUI();
+  }
+
+  /***********************
+   * Render Products
+   ***********************/
+  const grid = document.getElementById('productsGrid');
+  const resultInfo = document.getElementById('resultInfo');
+
+   function renderProducts(list){
+    grid.innerHTML = "";
+    list.forEach(p=>{
+      const el = document.createElement('div');
+      el.className = 'product';
+      el.innerHTML = `
+        <img src="${p.img}" alt="${p.name}">
+        <div class="p-info">
+          <div class="p-title">${p.name}</div>
+          <div class="p-meta">Weight: ${p.weight}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="p-price">${formatPrice(calcDiscountPrice(p.price,p.discount))}</div>
+            ${p.discount ? `<div class="small" style="text-decoration:line-through;color:#999"> ${formatPrice(p.price)}</div>` : ''}
+            ${p.discount ? `<div style="background:#e63946;color:white;padding:4px 6px;border-radius:6px;font-size:12px">${p.discount}%</div>` : ''}
+          </div>
+
+          <div class="p-actions">
+            <button class="btn btn-add" data-action="add" data-id="${p.id}">Add to Cart</button>
+            <button class="btn btn-buy" data-action="buy" data-id="${p.id}">Buy Now</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(el);
+    });
+
+
+    resultInfo.innerText = `Showing ${list.length} product(s)`;
+  }
+
+  renderProducts(products);
+
+  /***********************
+   * Search & Category Filter
+   ***********************/
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', ()=>{
+    applyFilter();
+  });
+
+  document.getElementById('categoryList').addEventListener('click', (e)=>{
+    const item = e.target.closest('.cat-item');
+    if(!item) return;
+    // mark selection visually (simple)
+    [...document.querySelectorAll('.cat-item')].forEach(i=>i.style.fontWeight='400');
+    item.style.fontWeight='700';
+    applyFilter();
+  });
+
+  function applyFilter(){
+    const q = searchInput.value.trim().toLowerCase();
+    // find selected category
+    const selectedCatEl = document.querySelector('.cat-item[style*="font-weight: 700"]') || document.querySelector('.cat-item[data-cat=""]');
+    const cat = selectedCatEl ? selectedCatEl.dataset.cat : '';
+    const filtered = products.filter(p=>{
+      const matchesQ = !q || p.name.toLowerCase().includes(q);
+      const matchesC = !cat || p.category === cat;
+      return matchesQ && matchesC;
+    });
+    renderProducts(filtered);
+  }
+
+  /***********************
+   * Product Buttons handler (Add/Buy)
+   ***********************/
+  document.body.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    const action = btn.dataset.action;
+    const id = btn.dataset.id && Number(btn.dataset.id);
+
+    if(action === 'add'){
+      const prod = products.find(p=>p.id===id);
+      openQtyModal(prod);
+    }
+    if(action === 'buy'){
+      const prod = products.find(p=>p.id===id);
+      openBuyModal([ {product: prod, qty:1} ]);
+    }
+
+    // cart +/- inside dropdown
+    if(btn.dataset.action === 'inc' || btn.dataset.action === 'dec'){
+      const pid = Number(btn.dataset.id);
+      if(!cart[pid]) return;
+      if(btn.dataset.action === 'inc') cart[pid].qty++;
+      else {
+        cart[pid].qty--;
+        if(cart[pid].qty <= 0) delete cart[pid];
+      }
+      updateCartUI();
+    }
+  });
+
+  /***********************
+   * Quantity Modal (Add to cart)
+   ***********************/
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalContent = document.getElementById('modalContent');
+
+  function openQtyModal(product){
+    modalContent.innerHTML = `
+      <h3>Add to Cart</h3>
+      <div style="display:flex;gap:10px;align-items:center">
+        <img src="${product.img}" style="width:110px;height:80px;object-fit:cover;border-radius:8px">
+        <div>
+          <div style="font-weight:700">${product.name}</div>
+          <div class="small">Price: ${formatPrice(calcDiscountPrice(product.price,product.discount))}</div>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label class="small">Quantity</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button class="btn btn-add" id="decQty">-</button>
+          <input id="qtyInput" type="number" value="1" min="1" style="width:70px;padding:8px;border-radius:8px;border:1px solid #ddd">
+          <button class="btn btn-buy" id="incQty">+</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn" id="closeModal">Cancel</button>
+        <button class="btn btn-buy" id="confirmAdd">Add to Cart</button>
+      </div>
+    `;
+    modalBackdrop.style.display = 'flex';
+
+    document.getElementById('closeModal').onclick = ()=>modalBackdrop.style.display='none';
+    document.getElementById('decQty').onclick = ()=>{
+      const qI = document.getElementById('qtyInput');
+      qI.value = Math.max(1, Number(qI.value)-1);
+    };
+    document.getElementById('incQty').onclick = ()=>{
+      const qI = document.getElementById('qtyInput');
+      qI.value = Number(qI.value)+1;
+    };
+    document.getElementById('confirmAdd').onclick = ()=>{
+      const qty = Math.max(1, Number(document.getElementById('qtyInput').value || 1));
+      addToCart(product, qty);
+      modalBackdrop.style.display = 'none';
+      // open cart dropdown briefly
+      showCartDropdown();
+    };
+  }
+
+  /***********************
+   * Buy Modal / Checkout
+   ***********************/
+  
+  function openBuyModal(items){
+    // items: [{product, qty}]
+    modalContent.innerHTML = `
+      <h3>Checkout</h3>
+      <div id="checkoutItems" style="max-height:160px;overflow:auto;margin-bottom:8px"></div>
+
+      <div style="margin-top:6px">
+        <label class="small">Name</label>
+        <input id="buyerName" type="text" placeholder="পুরা নাম" />
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <div style="flex:1">
+          <label class="small">Phone number</label>
+          <input id="buyerPhone" type="text" placeholder="01xxxxxxxxx" />
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <label class="small">Home Address</label>
+        <div class="form-row" style="margin-top:6px">
+          <div class="col"><input id="addrZilla" placeholder="জেলা" /></div>
+          <div class="col"><input id="addrPost" placeholder="Post Office" /></div>
+        </div>
+        <div style="margin-top:6px"><input id="addrLoc" placeholder="Location (street/area)"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+        <div class="small" id="checkoutTotal">Total: ৳0</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="cancelCheckout">Cancel</button>
+          <button class="btn btn-buy" id="proceedToPayment">Confirm</button>
+        </div>
+      </div>
+    `;
+    modalBackdrop.style.display = 'flex';
+
+    const wrap = document.getElementById('checkoutItems');
+    let total=0;
+    items.forEach(it=>{
+      const price = calcDiscountPrice(it.product.price, it.product.discount);
+      total += price*it.qty;
+      const r = document.createElement('div');
+      r.style.display='flex';
+      r.style.justifyContent='space-between';
+      r.style.padding='6px 0';
+      r.innerHTML = `<div>${it.product.name} x ${it.qty}</div><div><b>${formatPrice(price*it.qty)}</b></div>`;
+      wrap.appendChild(r);
+    });
+    document.getElementById('checkoutTotal').innerText = "Total: " + formatPrice(total);
+
+    document.getElementById('cancelCheckout').onclick = ()=> modalBackdrop.style.display='none';
+
+    document.getElementById('proceedToPayment').onclick = ()=>{
+      // validate basic fields
+      const name = document.getElementById('buyerName').value.trim();
+      const phone = document.getElementById('buyerPhone').value.trim();
+      if(!name || !phone){
+        alert('অনুগ্রহ করে নাম ও ফোন দিন।');
+        return;
+      }
+      openPaymentModal(items, {name, phone,
+        address: {
+          zilla: document.getElementById('addrZilla').value.trim(),
+          post: document.getElementById('addrPost').value.trim(),
+          loc: document.getElementById('addrLoc').value.trim()
+        }
+      });
+    };
+  }
+
+function openPaymentModal(items, buyer){
+    modalContent.innerHTML = `
+      <h3>Payment Method</h3>
+      <div class="payment-options">
+        <label><input type="radio" name="payment" value="Bkash" checked> <div style="flex:1">Bkash (Mobile) <div class="small">(txn : send to 01853319495 )</div></div></label>
+        <label><input type="radio" name="payment" value="Cash on delivery"> Cash on delivery</label>
+        <label><input type="radio" name="payment" value="ATM payment"> ATM payment (card)</label>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button class="btn" id="payCancel">Cancel</button>
+        <button class="btn btn-buy" id="payConfirm">Pay / Confirm</button>
+      </div>
+    `;
+    document.getElementById('payCancel').onclick = ()=> modalBackdrop.style.display='none';
+
+    document.getElementById('payConfirm').onclick = async ()=>{
+      const pay = document.querySelector('input[name="payment"]:checked').value;
+
+      // Formspree data preparation
+      let formData = new FormData();
+      formData.append("name", buyer.name);
+      formData.append("email", ""); // যদি customer email চাইলে এখানে input নিতে হবে
+      formData.append("message", `
+Customer Name: ${buyer.name}
+Phone: ${buyer.phone}
+Address: ${buyer.address.zilla}, ${buyer.address.post}, ${buyer.address.loc}
+Payment Method: ${pay}
+
+Order Details:
+${items.map(it => `${it.product.name} x ${it.qty} = ${formatPrice(calcDiscountPrice(it.product.price, it.product.discount)*it.qty)}`).join("\n")}
+Total: ${formatPrice(items.reduce((sum,it)=> sum + calcDiscountPrice(it.product.price,it.product.discount)*it.qty,0))}
+      `);
+
+      try{
+        const resp = await fetch('https://formspree.io/f/mzzjevgn', {
+          method: 'POST',
+          body: formData,
+          headers: {'Accept':'application/json'}
+        });
+        if(resp.ok){
+          modalContent.innerHTML = `
+            <h3>Order Confirmed</h3>
+            <p class="small">ধন্যবাদ ${buyer.name} — আপনার অর্ডার গ্রহণ করা হয়েছে।</p>
+            <p class="small">Payment Method: <b>${pay}</b></p>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px">
+              <button class="btn btn-buy" id="closeFinish">Close</button>
+            </div>
+          `;
+          cart = {}; updateCartUI();
+          document.getElementById('closeFinish').onclick = ()=> modalBackdrop.style.display='none';
+        } else {
+          alert("Failed to submit order. Please try again.");
+        }
+      } catch(err){
+        alert("Error sending order. Check your internet connection.");
+      }
+    };
+}
+
+  
+  
+  /***********************
+   * Cart dropdown toggle
+   ***********************/
+  const cartToggle = document.getElementById('cartToggle');
+  cartToggle.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    showCartDropdown();
+  });
+
+  function showCartDropdown(){
+    cartDropdown.style.display = cartDropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // close dropdown when clicking outside
+  document.addEventListener('click', (e)=>{
+    if(!cartDropdown.contains(e.target) && e.target !== cartToggle){
+      cartDropdown.style.display = 'none';
+    }
+  });
+
+  // goto checkout from dropdown
+  document.getElementById('gotoCheckoutBtn').addEventListener('click', ()=>{
+    const items = Object.values(cart).map(it=>({product: it.product, qty: it.qty}));
+    if(items.length===0){
+      alert('Cart is empty');
+      return;
+    }
+    openBuyModal(items);
+    cartDropdown.style.display = 'none';
+  });
+
+  /***********************
+   * Carousel logic
+   ***********************/
+  (function initCarousel(){
+    const imgs = Array.from(document.querySelectorAll('#carousel img'));
+    let idx = 0;
+    setInterval(()=>{
+      imgs[idx].classList.remove('active');
+      idx = (idx+1) % imgs.length;
+      imgs[idx].classList.add('active');
+    }, 3000);
+  })();
+
+  /***********************
+   * Initial UI
+   ***********************/
+  updateCartUI();
+
+  /***********************
+   * Small enhancement: click product image to open quick view (optional)
+   ***********************/
+  document.body.addEventListener('click', (e)=>{
+    const img = e.target.closest('.product img');
+    if(!img) return;
+    const pName = img.closest('.product').querySelector('.p-title').innerText;
+    const prod = products.find(p=>p.name === pName);
+    if(prod) {
+      // open quick view
+      modalContent.innerHTML = `
+        <h3>${prod.name}</h3>
+        <img src="${prod.img}" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+        <p class="small" style="margin-top:8px">Price: ${formatPrice(calcDiscountPrice(prod.price, prod.discount))} ${prod.discount?` <span style="text-decoration:line-through;color:#999">${formatPrice(prod.price)}</span>`:''}</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="btn" id="quickClose">Close</button>
+          <button class="btn btn-add" id="quickAdd">Add to Cart</button>
+          <button class="btn btn-buy" id="quickBuy">Buy Now</button>
+        </div>
+      `;
+      modalBackdrop.style.display='flex';
+      document.getElementById('quickClose').onclick = ()=> modalBackdrop.style.display='none';
+      document.getElementById('quickAdd').onclick = ()=> { modalBackdrop.style.display='none'; openQtyModal(prod); };
+      document.getElementById('quickBuy').onclick = ()=> { modalBackdrop.style.display='none'; openBuyModal([{product:prod, qty:1}]); };
+    }
+  });
+
+  // Prevent modal click from closing
+  modalBackdrop.addEventListener('click', (e)=>{
+    if(e.target === modalBackdrop){
+      modalBackdrop.style.display = 'none';
+    }
+  });
+
+  // initial category mark (All)
+  document.querySelector('.cat-item[data-cat=""]').style.fontWeight = '700';
+</script>
+</body>
+</html>
+
