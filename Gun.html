@@ -1,0 +1,570 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GUNS RELOAD</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://img.freepik.com/premium-photo/silhouette-businessman-dark-photo_1009902-38764.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    .view-cart-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: orange;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .main-content {
+      display: flex;
+      padding: 30px;
+    }
+    .left-img {
+      width: 300px;
+      height: 300px;
+    }
+    .terms-box {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+    }
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .product-box {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      width: 300px;
+      margin: 10px;
+      padding: 10px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+    }
+    .product-box img {
+      width: 100%;
+    }
+    .cart-popup, .order-popup {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      padding: 20px;
+      color: white;
+      z-index: 10;
+    }
+    .order-popup input {
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GUNS RELOAD</h1>
+    <button class="view-cart-btn" onclick="showCart()">View Cart</button>
+  </header>
+
+  <div class="main-content">
+    <img class="left-img" src="https://st.depositphotos.com/1006542/2258/i/450/depositphotos_22585059-stock-photo-gangster-with-gun.jpg" alt="Gun">
+    <div class="terms-box">
+      <h3>Terms and Conditions</h3>
+      <ul>
+        <li>Do not aim at living creatures.</li>
+        <li>Not for children under 13 years old.</li>
+        <li>Keep out of children's reach.</li>
+        <li>Only for safe recreational use.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <!-- Product boxes will be added here manually -->
+    <div class="product-box">
+      <h4>Product Code: RIF-0125</h4>
+      <img src="https://images-cdn.ubuy.co.in/634ec4fd60f1227ecc4c2116-toy-gun-for-nerf-gun-darts-automatic.jpg" alt="Gun">
+      <p>Price: BTC 1254</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1254</p>
+      <button onclick='addToCart("RIF-0125")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-002</h4>
+      <img src="https://m.media-amazon.com/images/I/619ydNLBpRL._AC_SL1001_.jpg" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-002")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-003</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAgW5LTNjv-tIoYL9V6Usgmbrn34T3Erc3JQ&s" alt="Gun">
+      <p>Price: BTC 500</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 1500</p>
+      <button onclick='addToCart("RIF-003")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-004</h4>
+      <img src="https://i0.wp.com/kiddylandbd.com/wp-content/uploads/2022/09/IMG_20220831_165325_1.jpg?fit=18601860&ssl=1" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-004")'>Add to Cart</button>
+    </div>
+   
+  
+    <div class="product-box">
+      <h4>Product Code: RIF-005</h4>
+      <img src="https://semartbd.com/public/uploads/all/yeRlwzWdlz7t6N4jVbZhlp0Aokm28wZL3KdZyL6S.jpeg" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-005")'>Add to Cart</button>
+    </div>
+  
+
+    <div class="product-box">
+      <h4>Product Code: RIF-006</h4>
+      <img src="https://www.texasstandard.org/wp-content/uploads/2019/05/2470330110_541fe41c94_b-1024x683.jpg" alt="Gun">
+      <p>Price: BTC 700</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-006")'>Add to Cart</button>
+    </div>
+  
+
+    <div class="product-box">
+      <h4>Product Code: RIF-007</h4>
+      <img src="https://m.media-amazon.com/images/I/71W-qrnQCjL.jpg" alt="Gun">
+      <p>Price: BTC 150</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 300</p>
+      <button onclick='addToCart("RIF-007")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-008</h4>
+      <img src="https://whyy.org/wp-content/uploads/2017/07s/shutterstock_gun.jpg" alt="Gun">
+      <p>Price: BTC 700</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1400</p>
+      <button onclick='addToCart("RIF-008")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-009</h4>
+      <img src="https://news4sanantonio.com/resources/media2/16x9/full/1015/center/80/04411c85-aa84-454e-927b-15787085e550-large16x9_woodlandpolicedepartment.jpg" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-009")'>Add to Cart</button>
+    </div>
+
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-010</h4>
+      <img src="https://baybee.co.in/cdn/shop/files/71wJT-CYRIL_1400x.jpg?v=1745006143" alt="Gun">
+      <p>Price: BTC 2100</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 4100</p>
+      <button onclick='addToCart("RIF-010")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-011</h4>
+      <img src="https://dartarmoury.com/cdn/shop/files/image_ebb74d93-42fd-4fe3-ae00-7b35a7aa2080.jpg?v=1688583234&width=533" alt="Gun">
+      <p>Price: BTC 900</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 2700</p>
+      <button onclick='addToCart("RIF-011")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-012</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9oev6n4GcJHg1prwZaemQ-9e__HkB1Y1fsY0K8amvZdFNjCXT7fedO6qFi3GSx3fCxg0&usqp=CAU" alt="Gun">
+      <p>Price: BTC 1600</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 3200</p>
+      <button onclick='addToCart("RIF-012")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-013</h4>
+      <img src="https://ae01.alicdn.com/kf/Hbdf34806211946f4a708b870d5558a8e3.jpg_640x640Q90.jpg_.webp" alt="Gun">
+      <p>Price: BTC 3300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 3300</p>
+      <button onclick='addToCart("RIF-013")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-014</h4>
+      <img src="https://m.media-amazon.com/images/I/51LsLdl2HFL._AC_UF1000,1000_QL80_.jpg" alt="Gun">
+      <p>Price: BTC 2300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 2300</p>
+      <button onclick='addToCart("RIF-014")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-015</h4>
+      <img src="https://m.media-amazon.com/images/I/71bHcocwYvL.jpg" alt="Gun">
+      <p>Price: BTC 2000</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 2000</p>
+      <button onclick='addToCart("RIF-015")'>Add to Cart</button>
+    </div>
+
+
+     <div class="product-box">
+      <h4>Product Code: RIF-016</h4>
+      <img src="https://i5.walmartimages.com/asr/87adf901-3424-4dd2-917f-46eb7642c3e0.9216671eed62380172957f70aef1886b.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF" alt="Gun">
+      <p>Price: BTC 2300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 2300</p>
+      <button onclick='addToCart("RIF-016")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-017</h4>
+      <img src="https://5.imimg.com/data5/ECOM/Default/2024/10/458637294/JL/NW/PC/234139847/h3b3754a52d7f43aa924ca815bb5ac499g-jpg-720x720q50-500x500.webp" alt="Gun">
+      <p>Price: BTC 550</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 1000</p>
+      <button onclick='addToCart("RIF-017")'>Add to Cart</button>
+    </div>
+
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-018</h4>
+      <img src="https://cdn.ecommercedns.uk/files/2/252292/6/28285446/t18-10007-03-ak47-assault-rifle-toy-pretend-gun-sound-light-vibr.jpg" alt="Gun">
+      <p>Price: BTC 500</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 500</p>
+      <button onclick='addToCart("RIF-018")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-019</h4>
+      <img src="https://s.alicdn.com/@sc04/kf/H12dfe528907c473e9152ee4143a74d35P.jpg" alt="Gun">
+      <p>Price: BTC 3000</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 3000</p>
+      <button onclick='addToCart("RIF-019")'>Add to Cart</button>
+    </div>
+
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0020</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJR-679qIaIwEyKL0d0SDIGPKuh4Xlqf7T8Q&s" alt="Gun">
+      <p>Price: BTC 550</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 550</p>
+      <button onclick='addToCart("RIF-0020")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0021</h4>
+      <img src="https://parristoys.com/cdn/shop/products/2703BGoldenRangerRifle_TILTED_642x642.jpg?v=1622145256" alt="Gun">
+      <p>Price: BTC 700</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 1300</p>
+      <button onclick='addToCart("RIF-0021")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0022</h4>
+      <img src="https://airsoftmania.eu/cdn/shop/products/1133178176_3_1024x.jpg?v=1662057873" alt="Gun">
+      <p>Price: BTC 2100</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 6300</p>
+      <button onclick='addToCart("RIF-0022")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0023</h4>
+      <img src="https://parristoys.com/cdn/shop/products/25BCM270CamoRifle_801x801.jpg?v=1622143285" alt="Gun">
+      <p>Price: BTC 2000</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 2000</p>
+      <button onclick='addToCart("RIF-0023")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0024</h4>
+      <img src="https://toyzone.in/cdn/shop/files/IMG_3798.jpg?v=1741260047" alt="Gun">
+      <p>Price: BTC 4000</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 4000</p>
+      <button onclick='addToCart("RIF-0024")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0025</h4>
+      <img src="https://khanaan.pk/cdn/shop/files/WhatsAppImage2023-05-04at4.11.21AM_18_512x512.jpg?v=1683521437" alt="Gun">
+      <p>Price: BTC 400</p>
+      <p>Quantity: 2</p>
+      <p>Total Price: BTC 800</p>
+      <button onclick='addToCart("RIF-0025")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0026</h4>
+      <img src="https://m.media-amazon.com/images/I/41mQb6hnBYL.jpg" alt="Gun">
+      <p>Price: BTC 1100</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1100</p>
+      <button onclick='addToCart("RIF-0026")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0027</h4>
+      <img src="https://wpcdn.us-east-1.vip.tn-cloud.net/www.klkntv.com/content/uploads/2022/06/y/r/fake-guns-toy-guns.png" alt="Gun">
+      <p>Price: BTC 1700</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1700</p>
+      <button onclick='addToCart("RIF-0027")'>Add to Cart</button>
+    </div>
+
+
+
+     <div class="product-box">
+      <h4>Product Code: RIF-0028</h4>
+      <img src="https://image.made-in-china.com/318f0j00VENYJMpzYWqQ/75e6d8f1f5ee353647033bc5b380056e-mp4.webp" alt="Gun">
+      <p>Price: BTC 2300</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 2300</p>
+      <button onclick='addToCart("RIF-0028")'>Add to Cart</button>
+    </div>
+
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0029</h4>
+      <img src="https://i.ebayimg.com/00/s/ODAwWDgwMA==/z/xh4AAOSwWERjye5x/$_57.JPG?set_id=880000500F" alt="Gun">
+      <p>Price: BTC 1000</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1000</p>
+      <button onclick='addToCart("RIF-0029")'>Add to Cart</button>
+    </div>
+
+
+
+     <div class="product-box">
+      <h4>Product Code: RIF-0030</h4>
+      <img src="https://img.joomcdn.net/171139fe906c8f5649c38e0a80cfd6d7e45ed1ca_original.jpeg" alt="Gun">
+      <p>Price: BTC 1350</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1350</p>
+      <button onclick='addToCart("RIF-0030")'>Add to Cart</button>
+    </div>
+
+
+     <div class="product-box">
+      <h4>Product Code: RIF-0031</h4>
+      <img src="https://ecdn.dhakatribune.net/contents/cache/images/640x359x1/uploads/media/2024/07/08/toy-pistol-40d9518a5f34e40f6366698a8fefcef7.jpg?jadewits_media_id=24020" alt="Gun">
+      <p>Price: BTC 420</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 410</p>
+      <button onclick='addToCart("RIF-0031")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0032</h4>
+      <img src="https://cdn.pixelspray.io/v2/black-bread-289bfa/HrdP6X/original/hamleys-product/492164898/665/492164898-1.webp" alt="Gun">
+      <p>Price: BTC 1200</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 1200</p>
+      <button onclick='addToCart("RIF-0032")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0033</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtdEVR8cjUeMS4VZxJerLy9-5kPHLVpSlBTA&s" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 3500</p>
+      <button onclick='addToCart("RIF-0033")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0034</h4>
+      <img src="https://i.ebayimg.com/images/g/UeUAAOSwWmVkDRSI/s-l1200.jpg" alt="Gun">
+      <p>Price: BTC 300</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 900</p>
+      <button onclick='addToCart("RIF-0034")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0035</h4>
+      <img src="https://image.invaluable.com/housePhotos/GreenwichAuction/91/763291/H6011-L359966838_mid.jpg" alt="Gun">
+      <p>Price: BTC 1300</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 3500</p>
+      <button onclick='addToCart("RIF-0035")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0036</h4>
+      <img src="https://s.alicdn.com/@sc04/kf/H8e2c05679fcc4f26b862d74c54aa8b098.jpg_720x720q50.jpg" alt="Gun">
+      <p>Price: BTC 250</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 650</p>
+      <button onclick='addToCart("RIF-0036")'>Add to Cart</button>
+    </div>
+
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0037</h4>
+      <img src="https://m.media-amazon.com/images/I/51xlyFBUqHL.jpg" alt="Gun">
+      <p>Price: BTC 300</p>
+      <p>Quantity: 5</p>
+      <p>Total Price: BTC 1500</p>
+      <button onclick='addToCart("RIF-0037")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0038</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsPGZi73mRQ-4U-dsNfj6R6E57ARRKPVsqOw&s" alt="Gun">
+      <p>Price: BTC 300</p>
+      <p>Quantity: 3</p>
+      <p>Total Price: BTC 800</p>
+      <button onclick='addToCart("RIF-0038")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0039</h4>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNVcEu3HH3Nuh5zAli_v8cg933rTlVT3Awfw&s" alt="Gun">
+      <p>Price: BTC 200</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 200</p>
+      <button onclick='addToCart("RIF-0039")'>Add to Cart</button>
+    </div>
+
+    <div class="product-box">
+      <h4>Product Code: RIF-0040</h4>
+      <img src="https://files.ekmcdn.com/preppersshop/images/ex-military-bullet-proof-jacket-with-black-waterproof-outer-59798-p.jpg" alt="Gun">
+      <p>Price: BTC 250</p>
+      <p>Quantity: 1</p>
+      <p>Total Price: BTC 250</p>
+      <button onclick='addToCart("RIF-0040")'>Add to Cart</button>
+    </div>
+
+
+    <!-- Add more product boxes as needed -->
+
+  </div>
+
+  <div class="cart-popup" id="cartPopup">
+    <h3>Cart Items</h3>
+    <div id="cartList"></div>
+    <button onclick="showOrderForm()">Confirm Order</button>
+  </div>
+
+  <div class="order-popup" id="orderPopup">
+    <h3>Enter Order Details</h3>
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="address" placeholder="Hidden Address">
+    <input type="text" id="country" placeholder="Country">
+    <input type="text" id="zella" placeholder="Zella">
+    <input type="text" id="postcode" placeholder="Post Code">
+    <input type="text" id="btc" placeholder="Last 4 Digits of BTC Account">
+    <button onclick="submitOrder()">Submit Order</button>
+  </div>
+
+  <script>
+    const productGrid = document.getElementById('productGrid');
+    const cart = [];
+
+    function addToCart(code) {
+      cart.push(code);
+      alert(`${code} added to cart.`);
+    }
+
+    function showCart() {
+      document.getElementById('cartList').innerHTML = cart.map(c => `<p>${c} - BTC 1254</p>`).join('');
+      document.getElementById('cartPopup').style.display = 'block';
+    }
+
+    function showOrderForm() {
+      document.getElementById('orderPopup').style.display = 'block';
+    }
+
+    function submitOrder() {
+      const orderData = {
+        name: document.getElementById('name').value,
+        address: document.getElementById('address').value,
+        country: document.getElementById('country').value,
+        zella: document.getElementById('zella').value,
+        postcode: document.getElementById('postcode').value,
+        btc: document.getElementById('btc').value,
+        cart: cart.join(', '),
+        timestamp: new Date().toLocaleString()
+      };
+
+      fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+        method: 'POST',
+        body: JSON.stringify(orderData),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => res.text())
+      .then(data => {
+        alert('Order Confirmed!');
+        document.getElementById('cartPopup').style.display = 'none';
+        document.getElementById('orderPopup').style.display = 'none';
+      })
+      .catch(err => alert('Error submitting order.'));
+    }
+  </script>
+</body>
+</html>
