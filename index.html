@@ -68,7 +68,14 @@
       width:20px;height:20px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;font-size:12px;
     }
-
+     /* Hamburger */
+    .hamburger {
+      display: none;
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
     /* Layout */
     .container{
       display:flex;
@@ -229,12 +236,34 @@
     .payment-options{display:flex;flex-direction:column;gap:8px;margin-top:10px}
     .payment-options label{display:flex;gap:8px;align-items:center;padding:8px;border-radius:8px;border:1px solid #eee}
     .small{font-size:13px;color:var(--muted)}
-
+     /* Mobile sidebar */
+    .mobile-sidebar {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100%;
+      background: var(--cream);
+      padding: 20px;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+      transition: left 0.3s ease;
+      z-index: 1500;
+      overflow-y: auto;
+    }
+    .mobile-sidebar.active { left: 0; }
+    .close-sidebar {
+      background:none;
+      border:none;
+      font-size:28px;
+      cursor:pointer;
+      margin-bottom:10px;
+    }
     /* Responsive */
     @media (max-width:1000px){
       .products{grid-template-columns: repeat(4, 1fr);}
       .sidebar{display:none}
       header{flex-wrap:wrap}
+      .hamburger{display:block;}
     }
     @media (max-width:700px){
       .products{grid-template-columns: repeat(3, 1fr);}
@@ -248,6 +277,7 @@
 <body>
 
   <header>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">☰</button>
     <div class="brand">Credora BD</div>
     <div class="search-wrap">
       <input id="searchInput" type="search" placeholder="Search... (প্রোডাক্ট নাম লিখে খুঁজুন)" />
@@ -269,6 +299,25 @@
       </div>
     </div>
   </header>
+
+  <!-- Mobile sidebar -->
+<div class="mobile-sidebar" id="mobileSidebar">
+  <button class="close-sidebar" id="closeSidebarBtn">&times;</button>
+  <h3>Categories</h3>
+  <div class="category">
+    <div class="cat-item" data-cat="">All</div>
+    <div class="cat-item" data-cat="Electrical">Electrical</div>
+    <div class="cat-item" data-cat="Cloths">Cloths</div>
+    <div class="cat-item" data-cat="Home Tax">Home Tax</div>
+    <div class="cat-item" data-cat="Toilettrease">Toilettrease</div>
+    <div class="cat-item" data-cat="Plannet">Plannet</div>
+    <div class="cat-item" data-cat="Toys">Toys</div>
+    <div class="cat-item" data-cat="Foods">Foods</div>
+    <div class="cat-item" data-cat="Crafts">Crafts</div>
+    <div class="cat-item" data-cat="accessories">accessories</div>
+    <div class="cat-item" data-cat="Engineers Choice">Engineers Choice</div>
+  </div>
+</div>
 
   <div class="container">
     <aside class="sidebar">
@@ -544,8 +593,6 @@
        
      ]; 
  
-
-
   /***********************
    * State & Helpers
    ***********************/
@@ -980,6 +1027,27 @@ Total: ${formatPrice(items.reduce((sum,it)=> sum + calcDiscountPrice(it.product.
   // initial category mark (All)
   document.querySelector('.cat-item[data-cat=""]').style.fontWeight = '700';
 </script>
+<script>
+  // Hamburger menu toggle
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileSidebar = document.getElementById('mobileSidebar');
+  const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+
+  hamburgerBtn.addEventListener('click', () => mobileSidebar.classList.add('active'));
+  closeSidebarBtn.addEventListener('click', () => mobileSidebar.classList.remove('active'));
+  window.addEventListener('click', (e) => {
+    if(mobileSidebar.classList.contains('active') && !mobileSidebar.contains(e.target) && e.target !== hamburgerBtn){
+      mobileSidebar.classList.remove('active');
+    }
+  });
+   // Carousel auto slide
+  const slides = document.querySelectorAll('.carousel img');
+  let currentSlide = 0;
+  setInterval(() => {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 3000);
+  </script>
 </body>
 </html>
-
