@@ -43,6 +43,7 @@
       gap:8px;
       align-items:center;
     }
+     
     .search-wrap input[type="search"]{
       width:100%;
       padding:10px 12px;
@@ -272,6 +273,9 @@
     @media (max-width:420px){
       .products{grid-template-columns: repeat(2, 1fr);}
     }
+    
+    
+    
   </style>
 </head>
 <body>
@@ -313,9 +317,14 @@
     <div class="cat-item" data-cat="Plannet">Plannet</div>
     <div class="cat-item" data-cat="Toys">Toys</div>
     <div class="cat-item" data-cat="Foods">Foods</div>
+    <div class="cat-item" data-cat="Fruits & Vegetables">Fruits & Vegetables</div>
+    <div class="cat-item" data-cat="Meat & Fish">Meat & Fish</div>
+    <div class="cat-item" data-cat="Beverages & Snacks">Beverages & Snacks</div>
     <div class="cat-item" data-cat="Crafts">Crafts</div>
     <div class="cat-item" data-cat="accessories">accessories</div>
     <div class="cat-item" data-cat="Engineers Choice">Engineers Choice</div>
+    <div class="cat-item" data-cat="Daily Life">Daily Life</div>
+    <div class="cat-item" data-cat="Health & Wellness">Health & Wellness</div>
      <a class="cat-item" data-cat="Guns Reload"
          href="Gun.html"
          target="_blank"
@@ -323,7 +332,12 @@
         Guns Reload
       </a>
   </div>
+  
 </div>
+ <div class="help-section">
+  <button id="helpBtn">Help</button>
+</div>
+
 
   <div class="container">
     <aside class="sidebar">
@@ -337,9 +351,14 @@
         <div class="cat-item" data-cat="Plannet">Plannet</div>
         <div class="cat-item" data-cat="Toys">Toys</div>
         <div class="cat-item" data-cat="Foods">Foods</div>
+        <div class="cat-item" data-cat="Fruits & Vegetables">Fruits & Vegetables</div>
+        <div class="cat-item" data-cat="Meat & Fish">Meat & Fish</div>
+        <div class="cat-item" data-cat="Beverages & Snacks">Beverages & Snacks</div>
         <div class="cat-item" data-cat="Crafts">Crafts</div>
         <div class="cat-item" data-cat="accessories">accessories</div>
         <div class="cat-item" data-cat="Engineers Choice">Engineers Choice</div>
+        <div class="cat-item" data-cat="Daily Life">Daily Life</div>
+        <div class="cat-item" data-cat="Health & Wellness">Health & Wellness</div>
         <a class="cat-item" data-cat="Guns Reload"
          href="Gun.html"
          target="_blank"
@@ -348,6 +367,10 @@
       </a>
       </div>
     </aside>
+    
+    <div class="help-section">
+  <button id="helpBtn">Help</button>
+</div>
 
     <main class="main">
       <!-- Carousel -->
@@ -1127,5 +1150,94 @@ Total: ${formatPrice(items.reduce((sum,it)=> sum + calcDiscountPrice(it.product.
     slides[currentSlide].classList.add('active');
   }, 3000);
   </script>
+  
+  <div id="helpModal" class="help-modal">
+  <div class="help-modal-content">
+    <span class="close">&times;</span>
+    <img src="cropped-Screenshot From 2025-09-28 10-17-40.png" alt="Help Image" style="width:100%; height:auto;">
+  </div>
+</div>
+
+<style>
+/* Help Button Style */
+.help-section {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+}
+
+#helpBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#helpBtn:hover {
+  background-color: #0056b3;
+}
+
+/* Modal Styles */
+.help-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.help-modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 15px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.help-modal-content img {
+  border-radius: 8px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: black;
+}
+</style>
+
+<script>
+// Modal Functionality
+var modal = document.getElementById("helpModal");
+var btn = document.getElementById("helpBtn");
+var span = document.getElementsByClassName("close")[0];
+
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+  
 </body>
 </html>
